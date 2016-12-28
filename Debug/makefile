@@ -33,7 +33,7 @@ all: spiralatrice.axf
 spiralatrice.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -Xlinker -Map="spiralatrice.map" -Xlinker --gc-sections -mcpu=arm7tdmi -T my_spiralatrice_Debug.ld -o "spiralatrice.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -Xlinker -Map="spiralatrice.map" -mcpu=arm7tdmi -T my_spiralatrice_Debug.ld -o "spiralatrice.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build

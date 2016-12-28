@@ -40,7 +40,7 @@ extern void v_print_msg(unsigned int row,char *s);
 	#define def_EMC_STA_WAITPAGE1 0x1f
 
 #elif Fcclk==60000000 
-	#pragma message "\n ****** \n ****** \n******      System clock frequency is 60Mhz\n ****** \n ****** \n"
+	#pragma message "System clock frequency is 60MHz"
 // frequenza clock "veloce": servono wait states maggiori
  
 // EMC #0

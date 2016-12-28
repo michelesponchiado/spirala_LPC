@@ -215,7 +215,7 @@ void LCD_wait_FPGA_done(void){
 		while (!defLcdINTactive){
             // wait some us
             v_wait_microseconds(def_pause_between_test_lcd_int_active_us);
-#pragma message "\n***sistemare numero di loop in lcd_wait_fpga_done ***\n"
+#pragma message "***sistemare numero di loop in lcd_wait_fpga_done ***"
 			if (++uiNumLoop>=def_num_loop_test_lcd_int_active){
 				// ATTIVO reset spi lcd
 				//defResetSpiLcd;

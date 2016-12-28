@@ -11,11 +11,25 @@
 INCLUDE "my_spiralatrice_Debug_lib.ld"
 INCLUDE "my_spiralatrice_Debug_mem.ld"
 
+
+/*
+the user mode stack is an exception because we want it at the end of the RAM.
+therefore, we just check against a minimum.
+The value below is the minimum memory required for ALL THE STACKS.
+There will be a link error if there is not this amount of RAM free at the end.
+*/
+_Minimum_Stack_Size = 0xC00 ;
+/*	0x1000 = heap memory =4096 bytes
+	Nella versione upsd avevo riservato 3500 bytes, quindi 4096 dovrebbero essere sufficienti
+*/
+_Minimum_Heap_Size  = 0x2000 ;
+
+
 ENTRY(_start)
 
 SECTIONS
 {
-
+PROVIDE( _start = 0x00000000); 
 /* the user firmware version string should be at a fixed address    */
 	user_fw_version 0x8000 :{
 	} >MFlash512   
@@ -28,55 +42,7 @@ SECTIONS
         KEEP(*(.text.main))            /* main entry point */
     } >MFlash512
     /* MAIN TEXT SECTION */  
-      
-    .text : ALIGN(4)
-    {
-        FILL(0xff)
-        __vectors_start__ = ABSOLUTE(.) ;
-        KEEP(*(.isr_vector))
-        
-        /* Global Section Table */
-        . = ALIGN(4) ;
-        __section_table_start = .;
-        __data_section_table = .;
-        LONG(LOADADDR(.data));
-        LONG(    ADDR(.data));
-        LONG(  SIZEOF(.data));
-        LONG(LOADADDR(.data_RAM2));
-        LONG(    ADDR(.data_RAM2));
-        LONG(  SIZEOF(.data_RAM2));
-        LONG(LOADADDR(.data_RAM3));
-        LONG(    ADDR(.data_RAM3));
-        LONG(  SIZEOF(.data_RAM3));
-        LONG(LOADADDR(.data_RAM4));
-        LONG(    ADDR(.data_RAM4));
-        LONG(  SIZEOF(.data_RAM4));
-        __data_section_table_end = .;
-        __bss_section_table = .;
-        LONG(    ADDR(.bss));
-        LONG(  SIZEOF(.bss));
-        LONG(    ADDR(.bss_RAM2));
-        LONG(  SIZEOF(.bss_RAM2));
-        LONG(    ADDR(.bss_RAM3));
-        LONG(  SIZEOF(.bss_RAM3));
-        LONG(    ADDR(.bss_RAM4));
-        LONG(  SIZEOF(.bss_RAM4));
-        __bss_section_table_end = .;
-        __section_table_end = . ;
-        /* End of Global Section Table */
-        
 
-        *(.after_vectors*)
-        
-        /* Code Read Protect data */
-        . = 0x000001FC ;
-        PROVIDE(__CRP_WORD_START__ = .) ;
-        KEEP(*(.crp))
-        PROVIDE(__CRP_WORD_END__ = .) ;
-        ASSERT(!(__CRP_WORD_START__ == __CRP_WORD_END__), "Linker CRP Enabled, but no CRP_WORD provided within application");
-        /* End of Code Read Protect */
-        
-    } >MFlash512
     
     .text : ALIGN(4)    
     {
@@ -210,6 +176,18 @@ SECTIONS
         /* This is used by the startup in order to initialize the .bss secion */
         _sbss = .;
         
+        _lib_bss_start = .;
+			*libc.a:*(.bss)
+			*libgcc.a:*(.bss)
+			*std_sbrk.lib:*(.bss)
+			*target.o(.bss)
+			*codelist.o(.bss)
+			*Anybus.o(.bss)
+			*rtcDS3231.o(.bss)
+			*spiwin2.o(.bss)
+			*vdip.o(.bss)
+        _lib_bss_end = .;
+                
         *(.bss*)
         *(COMMON)
         . = ALIGN(4) ;
@@ -248,7 +226,42 @@ SECTIONS
         _end_noinit = .;
     } > Ram64
     
-    PROVIDE(_pvHeapStart = DEFINED(__user_heap_base) ? __user_heap_base : .);
+    /* This is the user stack section 
+    This is just to check that there is enough RAM left for the User mode stack
+    It should generate an error if it's full.
+     */
+    /* This is the user heap section */
+    ._usrheap :
+    {
+	    . = ALIGN(4);
+        _susrheap = . ;
+        
+        . = . + _Minimum_Heap_Size ;
+        
+	    . = ALIGN(4);
+        _eusrheap = . ;
+    } >Ram64
+    ._usrstack :
+    {
+	    . = ALIGN(4);
+        _susrstack = . ;
+        
+        . = . + _Minimum_Stack_Size ;
+        
+	    . = ALIGN(4);
+        _eusrstack = . ;
+        _estack = . ;
+    } >Ram64
+    
+    
+    ._AZ4186_NVRAM :        
+    {
+        *(AZ4186_NVRAM_SECTION);
+    } >AZ4186_NVRAM
+        
+    
+    /*PROVIDE(_pvHeapStart = DEFINED(__user_heap_base) ? __user_heap_base : .);*/
+    PROVIDE(_pvHeapStart = _susrheap);
     /* PROVIDE(_vStackTop = DEFINED(__user_stack_top) ? __user_stack_top : __top_Ram64 - 0); */
     /*PROVIDE(_vStackTop = __user_stack_top);*/
      PROVIDE(_vStackTop = __top_Ram64);
