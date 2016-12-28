@@ -8,15 +8,27 @@
  */
 
 
-INCLUDE "spiralatrice_Debug_lib.ld"
-INCLUDE "spiralatrice_Debug_mem.ld"
+INCLUDE "my_spiralatrice_Debug_lib.ld"
+INCLUDE "my_spiralatrice_Debug_mem.ld"
 
 ENTRY(_start)
 
 SECTIONS
 {
 
-    /* MAIN TEXT SECTION */    
+/* the user firmware version string should be at a fixed address    */
+	user_fw_version 0x8000 :{
+	} >MFlash512   
+	
+/* the main entry point should be at a fixed address    */
+	MAIN_ENTRY_POINT 0x8100 :
+    {
+	. = ALIGN(4);
+        KEEP(*(.MAIN_ENTRY_POINT))            /* main entry point */
+        KEEP(*(.text.main))            /* main entry point */
+    } >MFlash512
+    /* MAIN TEXT SECTION */  
+      
     .text : ALIGN(4)
     {
         FILL(0xff)
