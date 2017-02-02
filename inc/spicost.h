@@ -61,7 +61,7 @@
 	*/
 	#define ADDR_LCDDAT     0xFE00
 
-	/* Non usato mai: non si sa cos' Š. */
+	/* Non usato mai: non si sa cos' ï¿½. */
 	#define ADDR_LCDHND     0x8010
 #endif
 
@@ -79,7 +79,7 @@ extern void initLcd(void);
 
 
 /* Con questa define viene escuso quasi totalmente il menu
-   utilit… e si aggiungono nel menu dei parametri
+   utilitï¿½ e si aggiungono nel menu dei parametri
    macchina i parametri massima perc errore significativa in misura
    ro e numero max di errori consecutivi ammessi. */
 /* #define defTest2fili */
@@ -136,8 +136,8 @@ enum languages {
    3 --> canale 2 (vel. produzione)
    4 --> canale 3 (assorbimento ruota 1)
    5 --> canale 4 (assorbimento ruota 2)
-   6 --> canale 5 (velocit… friz 1)
-   7 --> canale 6 (velocit… friz 2)
+   6 --> canale 5 (velocitï¿½ friz 1)
+   7 --> canale 6 (velocitï¿½ friz 2)
    8 --> libero
 */
 #define NUM_INP_ANALOG 8
@@ -201,12 +201,12 @@ enum languages {
 #define IsteresiUpPot  (11./10.)
 #define IsteresiDnPot  (9./10.)
 
-/* Incremento della velocit… delle frizioni rispetto a quella
-   nominale per dare loro un p• di grip rispetto a mandrino/filo. */
+/* Incremento della velocitï¿½ delle frizioni rispetto a quella
+   nominale per dare loro un pï¿½ di grip rispetto a mandrino/filo. */
 #define DEFAULT_DELTA_RPM_FRIZ  ((char)105)
 
 // margine rotazione frizioni rispetto al massimo numero di giri ammesso
-// es la frizione può ruotare a max 1000 rpm teorici, con questo valore impongo
+// es la frizione puï¿½ ruotare a max 1000 rpm teorici, con questo valore impongo
 // un margine di sicurezza [rpm]
 #define defMarginRpmFrizioni 5
 
@@ -234,7 +234,7 @@ enum languages {
 
 /* Numero di gradini di rampa generati per variare le uscite dei dac.
    ATTUALMENTE
-   Dato che si d… un gradino ogni 30 ms e i gradini sono 10,
+   Dato che si dï¿½ un gradino ogni 30 ms e i gradini sono 10,
    la rampa dura 0.3 s.
 */
 #define NumGradiniRampaDAC  10
@@ -639,15 +639,15 @@ enum ums {
 #define FLG_PRINT_ENUM   0x4
 
 /* Maschere che permettono di identificare nel carattere macparms.flag
-   se una particolare funzionalit… Š on o off. */
+   se una particolare funzionalitï¿½ ï¿½ on o off. */
 #define FLG_PAR_MRES 0x1
 #define FLG_PAR_MSTA 0x2
 #define FLG_PAR_VQ   0x4
 #define FLG_PAR_VV1  0x8
-/* Flag che indica se la macchina Š predisposta al
+/* Flag che indica se la macchina ï¿½ predisposta al
    funzionamento automatico o no. */
 #define FLG_PAR_AUT  0x10
-/* Questo flag Š inutile, dato che si lavora con una sola torretta
+/* Questo flag ï¿½ inutile, dato che si lavora con una sola torretta
    #define FLG_PAR_VV2  0x10
 */
 
@@ -753,16 +753,16 @@ enum statiMisura {
 
 /* Valore massimo della misura effettuata dall' adc converter.
    Questo valore indica un overflow  (che il programma interpreta
-   come un overrange se può cambiare scala).
-   Dato che il ns convertitore è a 13 bit, pero' solo l'80% può essere usato
-   80*8191/100--> 6552, questa è una buona soglia...
+   come un overrange se puï¿½ cambiare scala).
+   Dato che il ns convertitore ï¿½ a 13 bit, pero' solo l'80% puï¿½ essere usato
+   80*8191/100--> 6552, questa ï¿½ una buona soglia...
    tolgo 10 step per sicurezza...
    
 */
 #define MIS_DIG_MAX ((80L*8191L)/100-10) 
 
-/* Modifica del 02/02/1996: il numero delle torrette sar… sempre e solo 1.
-   Non si vorr… mai pi— gestire la seconda torretta. */
+/* Modifica del 02/02/1996: il numero delle torrette sarï¿½ sempre e solo 1.
+   Non si vorrï¿½ mai piï¿½ gestire la seconda torretta. */
 #define MAX_TORRETTE 1
 #define MIN_ANTI_PRETAGLIO 50 /* impulsi */
 #define RITARDO_MISURA 1000 /* impulsi */
@@ -781,13 +781,13 @@ enum statiMisura {
 #define ROUND 0.4999999
 
 #define ADDR_ENC1       0xFF06
-/* Questo encoder non viene utilizzato, perch‚ si usa una sola torretta
+/* Questo encoder non viene utilizzato, perchï¿½ si usa una sola torretta
     #define ADDR_ENC2   0xFF04
 */
 #define ADDR_INP_DIG    0x9000
 #define ADDR_OUT_DIG    0x9002
 // indirizzo del dac che imposta la portata dinamica
-// il dac è interfacciato col micro tramite bus parallelo
+// il dac ï¿½ interfacciato col micro tramite bus parallelo
 // si usa il CS5, che viene generato dalla logica psd del upsd
 #define ADDR_DACPOR1    0xB000
 
@@ -797,7 +797,7 @@ enum statiMisura {
 #define ADDR_KBENOU     0x800E
 #define ADDR_7SEGDT     0xFE40
 #define ADDR_7SEGPT     0xFE80
-/* Neanche questo dac non viene pi— usato, dato che esiste una sola torretta
+/* Neanche questo dac non viene piï¿½ usato, dato che esiste una sola torretta
     #define ADDR_DACPOR2        0xFFC0
 */
 
@@ -807,8 +807,13 @@ enum statiMisura {
    che in modo subdolo influenzi anche il calcolo degli anticipi nelle
    azioni di taglio e pretaglio. */
 #define MM_PER_IMPULSO 0.1
-/* Cosa significa questa costante? */
-/*#define MM_RUOTA1_AVV 930.0*/
+/* Cosa significa questa costante?
+ * E' la distanza percorsa dal filo per andare dalla ruota di misura al mandrino
+ * Quando si hanno due fili, il secondo filo puÃ² arrivare con un percorso diverso
+ * Ci sono al max due percorsi diversi del filo, sarebbe opportuno che fosse possibile indicare esplicitamente quale percorso fanno i fili, oppure si potrebbe autoselezionare in base al diametro
+ * */
+#define MM_RUOTA1_AVV 811.0
+
 #define MM_RUOTA1_AVV 811.0
 
 #define ALR_FILOAGGROV 0x1
@@ -828,14 +833,14 @@ enum statiMisura {
 #define ALR_I2C_BUS   0x4000
 #define ALR_TEMPERATURE      0x8000
 
-/* Unit… di resistenza programma: rappresenta il valore normalizzato
+/* Unitï¿½ di resistenza programma: rappresenta il valore normalizzato
    della resistenza da produrre. Inoltre nella routine
    di servizio dell' interruzione da timer 0 non si possono usare numeri
-   float, per cui questa scappatoia Š necessaria. */
+   float, per cui questa scappatoia ï¿½ necessaria. */
 #define TARGET_URP 10000
 /* Coefficiente moltiplicativo della lunghezza che permette di ottenere una
    mantissa con molti bit significativi. Dato che la lunghezza della spira
-   Š dell' ordine del metro (i.e. 1000 mmm), moltiplicando per MAGN_LEN
+   ï¿½ dell' ordine del metro (i.e. 1000 mmm), moltiplicando per MAGN_LEN
    si ottiene 100 000 000, quindi tramite un intero lungo si riesce a
    rappresentare la lunghezza con una precisione del centesimo di millimetro.
 */
@@ -844,9 +849,9 @@ enum statiMisura {
    Invece di usare un float, uso un intero moltiplicando il risultato
    per 100000 (i.e. MAGN_LEN). */
 #define ADC_TO_TENS 1221 /* 5 * 100000 / 4096 (misura 12 bit -> ?Volts tramite prodotto) */
-/* Da quanti urp Š composto un ohm? Da 10000.
+/* Da quanti urp ï¿½ composto un ohm? Da 10000.
    Ogni urp vale quindi 1/10000 di ohm. Invece di usare questo fattore
-   che Š un numero floating point, uso come unit… di resistenza il microohm;
+   che ï¿½ un numero floating point, uso come unitï¿½ di resistenza il microohm;
    in questo modo un urp vale 1/10000*1 000 000 microohm= 100 microohm.
    Questo coefficiente converte pertanto gli urp in microohm.
 */
@@ -988,8 +993,8 @@ enum {
 
 
 /* Valore nominale della coppia motrice delle frizioni (in %).
-   Si usa il 50% solo perch‚ Š il valore centrale fra 0 e 100%, quindi
-   Š agevole da modificare via potenziometro.
+   Si usa il 50% solo perchï¿½ ï¿½ il valore centrale fra 0 e 100%, quindi
+   ï¿½ agevole da modificare via potenziometro.
 */
 #define VAL_NOMINALE_COPPIA 50
 
@@ -1011,7 +1016,7 @@ enum {
 #define N_BIT_ADC     13
 /* Fondo scala dell' ADC. 
    FONDO SCALA VA DA 0 A 10 v NORMALMENTE
-   1 BIT, QUELLO DEL SEGNO, è PERSO, ALMENO MI SEMBRA DALLE PROVE FATTE
+   1 BIT, QUELLO DEL SEGNO, ï¿½ PERSO, ALMENO MI SEMBRA DALLE PROVE FATTE
    INOLTRE LA TENSIONE ARRIVA MAX A 5V, PERTANTO PERDO DUE BIT...
 */
 #define FS_ADC        ((float)(1L<<(N_BIT_ADC-1)))
@@ -1019,7 +1024,7 @@ enum {
 #define FS_ADC_BIPOLARI        (float)(1L<<(N_BIT_ADC-2))
 /* Posizione del bit che indica conversione bipolare nell' ADC. */
 #define BIT_BIP_ADC   0x08
-/* Al massimo vengono assorbiti 3.8 AmpŠre di corrente
+/* Al massimo vengono assorbiti 3.8 Ampï¿½re di corrente
    dai motori delle ruote di contrasto. */
 #define FS_AMPERE_ASSORB 3.8
 
@@ -1033,12 +1038,12 @@ enum {
 //#define MAX_FS_ADC_STATICA  3276
 // 80% del fondo scala...
 // era cosi' #define MAX_FS_ADC_STATICA  ((80L*4095L)/100)
-// attenzione! La portata della misura statica è stata raddoppiata a 10V
-// pertanto il fondo scala è 80% di 10V=80%di 8191 step=13bit!
+// attenzione! La portata della misura statica ï¿½ stata raddoppiata a 10V
+// pertanto il fondo scala ï¿½ 80% di 10V=80%di 8191 step=13bit!
 #define MAX_FS_ADC_STATICA  ((80L*8191L)*0.01)
 #define FS_ADC_STATICA  (8191L)
 // commuto quando passo sotto il tot% di portata
-// praticamente la formula è questa
+// praticamente la formula ï¿½ questa
 // portataAlta=10*portataBassa
 // per evitare di correre tra le portate deve essere
 // sogliaLow*PortataAlta<sogliaHi*PortataBassa
@@ -1060,9 +1065,9 @@ enum {
 
 
 /* Numero di canali che possono essere tarati;
-   il primo canale Š quello dell' ohmetro sulla torretta per le misure
+   il primo canale ï¿½ quello dell' ohmetro sulla torretta per le misure
       dinamiche;
-   il secondo canale Š quello dell' ohmetro per le misure statiche
+   il secondo canale ï¿½ quello dell' ohmetro per le misure statiche
    ...
 */
 #define NCANALI_TARABILI 2
@@ -1071,8 +1076,8 @@ enum {
 #define N_CANALE_V_MAN 		2
 #define N_CANALE_ASSORB1  	3
 #define N_CANALE_ASSORB2  	4
-#define N_CANALE_V1  		5 /* Canale velocit… ruota 1. */
-#define N_CANALE_V2  		6 /* Canale velocit… ruota 2. */
+#define N_CANALE_V1  		5 /* Canale velocitï¿½ ruota 1. */
+#define N_CANALE_V2  		6 /* Canale velocitï¿½ ruota 2. */
 
 #define VOLT_PER_DIG  1.2207e-3 /* 5 / 4096 */
 
@@ -1108,10 +1113,10 @@ enum {
    LampOnOff indica che la lampada sta lampeggiando per indicare la prossima
    fine del lotto.
    LampAccesaPeriodo indica che la lampada se ne sta accesa per il periodo
-   di tempo indicato dall' utente, dopodich‚ si spegne.
-   LampCount serve per determinare se la lampada Š in uno dei due stati
+   di tempo indicato dall' utente, dopodichï¿½ si spegne.
+   LampCount serve per determinare se la lampada ï¿½ in uno dei due stati
    precedenti, nei quali si deve contare il tempo che scorre.
-   LampAccesa indica che la lampada Š accesa fino al prossimo start.
+   LampAccesa indica che la lampada ï¿½ accesa fino al prossimo start.
 */
 #define LampSpenta              0x00
 #define LampOnOff               0x01
@@ -1123,7 +1128,7 @@ enum {
 
 
 // macro che permette di aggiornare il valore in uscita verso il dac parallelo
-// ad558; ha un tempo di accesso di almeno 200ns, mentre upsd non può fare meno di 175ns
+// ad558; ha un tempo di accesso di almeno 200ns, mentre upsd non puï¿½ fare meno di 175ns
 // e per default fa 100ns, allora divido il clock per 4, quindi i miei 100ns diventano 400ns
 // e riesco a gestire ad558 senza problemi
 //		CCON0|=0X02;   abbasso la frequenza di clock di un fattore 4

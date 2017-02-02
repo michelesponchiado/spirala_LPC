@@ -10,7 +10,7 @@
    #define defRpmMandrinoDefault 6000   /* Max rpm mandrino. */
    #define defDurataAllDefault 350 /* Durata minima allarme per antirimbalzo. */
 /* Distanza in mm tra l' asse del foro da cui esce la spirale e l' asse
-   del coltello col coltello alla posizione pi— bassa. */
+   del coltello col coltello alla posizione piï¿½ bassa. */
         #define AsseSpi_AsseColt_mm  22.9
 /* Corsa del coltello dalla posizione bassa alla posizione alta in mm.
    (Default).
@@ -48,7 +48,7 @@
    del finecorsa filo spezzato nelle lavorazioni con due fili. */
 #define MIN_DIAM_TEST_INTRZ   0.30
 
-/* Valore minimo e massimo (in m/min) della velocit… di produzione. */
+/* Valore minimo e massimo (in m/min) della velocitï¿½ di produzione. */
 #define MIN_VEL_PROD  0.1
 #define MAX_VEL_PROD 60.0
 
@@ -84,11 +84,11 @@
 #define MAX_ASSORB_RUOTA      2.0
 
 /* Valore minimo e massimo (in mm) del diametro del filo. */
-#define MIN_DIAM_FILO        0.05
+#define MIN_DIAM_FILO        0.02
 #define MAX_DIAM_FILO        5.0
 
 /* Valore minimo e massimo (in mm) del diametro del mandrino. */
-#define MIN_DIAM_MD          0.4
+#define MIN_DIAM_MD          0.2
 #define MAX_DIAM_MD          20
 
 /* Numero minimo e massimo di fili che possono comporre la spira. */
@@ -97,7 +97,7 @@
 
 // numero max di pezzi che possono essere inseriti in lotto
 #define MIN_QUANTITA	     0
-#define MAX_QUANTITA         9999
+#define MAX_QUANTITA         99999
 
 #define MIN_QUANTITA_PROVE   0
 #define MAX_QUANTITA_PROVE   999
@@ -129,7 +129,7 @@
 #define MIN_IASSE    1.00
 #define MAX_IASSE   60.00
 
-/* Valore minimo e massimo (in %) del delta % della velocit… delle frizioni
+/* Valore minimo e massimo (in %) del delta % della velocitï¿½ delle frizioni
    rispetto al valore nominale.
    Posso andare dal 20% del valore nominale al 180% del valore nominale.
 */
@@ -144,8 +144,8 @@
 #define MIN_NUM_FRIZIONI     1
 #define MAX_NUM_FRIZIONI     2
 
-/* Valore minimo e massimo del delta sulla velocit… delle frizioni
-   (unit… di misura=unit… di fondo scala adc). */
+/* Valore minimo e massimo del delta sulla velocitï¿½ delle frizioni
+   (unitï¿½ di misura=unitï¿½ di fondo scala adc). */
 #define MAX_DELTA_VRUOTE   FS_ADC
 #define MIN_DELTA_VRUOTE   0
 /* Numero massimo di secondi di ritardo prima dell' avvio. */

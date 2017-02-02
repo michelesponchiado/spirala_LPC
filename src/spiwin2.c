@@ -495,7 +495,7 @@ xdata TipoPrivatoLavoro privato_lavoro;
 
 code TipoStructInfoFieldCodice_Lingua iml[4]={
 	{0,defMaxCharLavoroString_Position, "nn","%-2i",1,defMaxLavoriInLista,&privato_lavoro.ucStringPosition[0],    1,1,enumStr20_Posizione,enumUm_num},
-	{0,defMaxCharLavoroString_Numpezzi, "nnnn","%-4i",1,MAX_QUANTITA,&privato_lavoro.ucStringNumpezzi[0],    1,1,enumStr20_Numero_pezzi,enumUm_num},
+	{0,defMaxCharLavoroString_Numpezzi, "nnnnn","%-5i",1,MAX_QUANTITA,&privato_lavoro.ucStringNumpezzi[0],    1,1,enumStr20_Numero_pezzi,enumUm_num},
 	{0,defMaxCharLavoroString_Ohm, "NNNNNN","%-6.2f",MIN_RES_CAN_MAKE,MAX_RES_CAN_MAKE,&privato_lavoro.ucStringOhm[0],    1,1,enumStr20_Valore_ohmico,enumUm_ohm},
 	{0,defMaxCharDescrizioneLavoro, "xxxxxxxxxxxxxxxxxxxx","%-20s",0.1,999,&privato_lavoro.ucStringDescrizione[0],    1,0,enumStr20_Descrizione,enumUm_none}
 };

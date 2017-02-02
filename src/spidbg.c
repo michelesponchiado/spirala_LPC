@@ -83,7 +83,7 @@ unsigned char ucHW_setupProduzione(void){
 	#define defPROD_fatti_col (140)
 
 	#define defPROD_da_fare_row (defPROD_title_row+32+12)
-	#define defPROD_da_fare_col (defLcdWidthX_pixel-4*16-12-16)
+	#define defPROD_da_fare_col (defLcdWidthX_pixel-4*16-12-24)
 
 	#define defPROD_button_tempo_residuo_row defPROD_da_fare_row
 	#define defPROD_button_tempo_residuo_col 0

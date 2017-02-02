@@ -131,6 +131,7 @@ For more information about the syntax of the linker scripts and how to modify th
 //
 // 3.36
 // work almost OK with LPCXpresso
+// * MASSIMO NUMERO PEZZI IN PRODUZIONE PORTATO A 99'999  , ERA 9'999
 //
 // 3.35
 // recompiled under LPCXpresso

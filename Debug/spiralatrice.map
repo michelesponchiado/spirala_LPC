@@ -575,7 +575,7 @@ misStaSleep         0x1               ./src/spiglb.o
 handleWaitOneCoil   0xc               ./src/spimis.o
 PSW                 0x1               ./src/spiglb.o
 ul_num_of_rpdo_rx   0x4               ./CANopen_stack/CO_PDO.o
-privato_lavoro      0x54              ./src/spiwin2.o
+privato_lavoro      0x58              ./src/spiwin2.o
 ucNumErrNandFlash   0x1               ./src/spi.o
 actTagTime          0x1               ./src/spiglb.o
 production_log      0x57c             ./src/spimis.o
@@ -5849,7 +5849,7 @@ MAIN_ENTRY_POINT
                 0xe0084000                . = ALIGN (0x4)
                 0xe0084000                PROVIDE (__end_bss_RAM4, .)
 
-.bss            0x40000ec0     0x8324 load address 0x00051da0
+.bss            0x40000ec0     0x8328 load address 0x00051da0
                 0x40000ec0                _bss = .
                 0x40000ec0                _sbss = .
                 0x40000ec0                _lib_bss_start = .
@@ -6113,13 +6113,13 @@ MAIN_ENTRY_POINT
                 0x400017d8        0x1 ./src/popup.o
  .bss           0x400017d9        0x0 ./src/rtcDS3231_newer.o
  .bss           0x400017d9        0x0 ./src/spi.o
- .bss.uc_elapsed_time_initialized.7666
+ .bss.ucAutoScrollLogChunk.7730
                 0x400017d9        0x1 ./src/spi.o
- .bss.ucIdxFirstRow_LP.7732
+ .bss.uc_last_clock_canopen.7666
                 0x400017da        0x1 ./src/spi.o
- .bss.uc_last_clock_canopen.7667
+ .bss.ucIdxFirstRow_LP.7731
                 0x400017db        0x1 ./src/spi.o
- .bss.ucAutoScrollLogChunk.7731
+ .bss.uc_elapsed_time_initialized.7665
                 0x400017dc        0x1 ./src/spi.o
  .bss           0x400017dd        0x0 ./src/spidbg.o
  *fill*         0x400017dd        0x3 
@@ -6743,7 +6743,7 @@ MAIN_ENTRY_POINT
                 0x40008714                his_privato
                 0x40008778                hw
                 0x40008c68                handle_wheel_inversion
- COMMON         0x40008c7c       0x84 ./src/spiwin2.o
+ COMMON         0x40008c7c       0x88 ./src/spiwin2.o
                 0x40008c7c                pJobsRunning_Jobs
                 0x40008c80                uc_after_ohm_m_fili_jump_to_enumWinId_Distanziatore
                 0x40008c81                happ
@@ -6753,37 +6753,37 @@ MAIN_ENTRY_POINT
                 0x40008ca0                pJobsSelected_Jobs
                 0x40008ca4                pJobsRunning
                 0x40008ca8                privato_lavoro
-                0x40008cfc                pJobsSelected
- COMMON         0x40008d00      0x2f7 ./src/vdip.o
-                0x40008d00                handleVdip
-                0x40008d1c                ucVdip_just2wait
-                0x40008d1d                uc_num_cr_found_by_receive_vdip
-                0x40008d1e                vdip_info
-                0x40008f56                ucStringRx_Vdip
-                0x40008ff6                uc_vdip_short_pause
- *fill*         0x40008ff7        0x1 
- COMMON         0x40008ff8        0x4 ./ff9/src/ff.o
-                0x40008ff8                FatFs
- COMMON         0x40008ffc        0xc ./CANopen_stack/LPC2388/CO_driver.o
-                0x40008ffc                enable_CAN1callback
-                0x40009000                ul_numof_unmatched_msg
-                0x40009004                enable_CAN2callback
- COMMON         0x40009008        0x8 ./CANopen_stack/CO_PDO.o
-                0x40009008                ul_clock_at_last_rpdo
-                0x4000900c                ul_num_of_rpdo_rx
- COMMON         0x40009010      0x140 /usr/local/lpcxpresso_7.8.0_426/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/libcr_c.a(stdio.o)
-                0x40009010                __Ciob
- COMMON         0x40009150       0x88 /usr/local/lpcxpresso_7.8.0_426/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/libcr_c.a(stdlib.o)
-                0x40009150                _exitvector
-                0x400091d4                _number_of_exit_functions
- COMMON         0x400091d8        0x8 /usr/local/lpcxpresso_7.8.0_426/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/libcr_c.a(__init_alloc.o)
-                0x400091d8                __heaps
-                0x400091dc                __end_of_heap
- COMMON         0x400091e0        0x4 /usr/local/lpcxpresso_7.8.0_426/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/libcr_c.a(initio.o)
-                0x400091e0                _extra
-                0x400091e4                . = ALIGN (0x4)
-                0x400091e4                _ebss = .
-                0x400091e4                PROVIDE (end, .)
+                0x40008d00                pJobsSelected
+ COMMON         0x40008d04      0x2f7 ./src/vdip.o
+                0x40008d04                handleVdip
+                0x40008d20                ucVdip_just2wait
+                0x40008d21                uc_num_cr_found_by_receive_vdip
+                0x40008d22                vdip_info
+                0x40008f5a                ucStringRx_Vdip
+                0x40008ffa                uc_vdip_short_pause
+ *fill*         0x40008ffb        0x1 
+ COMMON         0x40008ffc        0x4 ./ff9/src/ff.o
+                0x40008ffc                FatFs
+ COMMON         0x40009000        0xc ./CANopen_stack/LPC2388/CO_driver.o
+                0x40009000                enable_CAN1callback
+                0x40009004                ul_numof_unmatched_msg
+                0x40009008                enable_CAN2callback
+ COMMON         0x4000900c        0x8 ./CANopen_stack/CO_PDO.o
+                0x4000900c                ul_clock_at_last_rpdo
+                0x40009010                ul_num_of_rpdo_rx
+ COMMON         0x40009014      0x140 /usr/local/lpcxpresso_7.8.0_426/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/libcr_c.a(stdio.o)
+                0x40009014                __Ciob
+ COMMON         0x40009154       0x88 /usr/local/lpcxpresso_7.8.0_426/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/libcr_c.a(stdlib.o)
+                0x40009154                _exitvector
+                0x400091d8                _number_of_exit_functions
+ COMMON         0x400091dc        0x8 /usr/local/lpcxpresso_7.8.0_426/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/libcr_c.a(__init_alloc.o)
+                0x400091dc                __heaps
+                0x400091e0                __end_of_heap
+ COMMON         0x400091e4        0x4 /usr/local/lpcxpresso_7.8.0_426/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/libcr_c.a(initio.o)
+                0x400091e4                _extra
+                0x400091e8                . = ALIGN (0x4)
+                0x400091e8                _ebss = .
+                0x400091e8                PROVIDE (end, .)
 
 .noinit_RAM2    0x7fe00000        0x0
  *(.noinit.$RAM2*)
@@ -6800,39 +6800,39 @@ MAIN_ENTRY_POINT
  *(.noinit.$RAM_RTC_2*)
                 0xe0084000                . = ALIGN (0x4)
 
-.noinit         0x400091e4        0x0
-                0x400091e4                _noinit = .
+.noinit         0x400091e8        0x0
+                0x400091e8                _noinit = .
  *(.noinit*)
-                0x400091e4                . = ALIGN (0x4)
-                0x400091e4                _end_noinit = .
+                0x400091e8                . = ALIGN (0x4)
+                0x400091e8                _end_noinit = .
 
-._usrheap       0x400091e4     0x2000 load address 0x0005a0c4
-                0x400091e4                . = ALIGN (0x4)
-                0x400091e4                _susrheap = .
-                0x4000b1e4                . = (. + _Minimum_Heap_Size)
- *fill*         0x400091e4     0x2000 
-                0x4000b1e4                . = ALIGN (0x4)
-                0x4000b1e4                _eusrheap = .
+._usrheap       0x400091e8     0x2000 load address 0x0005a0c8
+                0x400091e8                . = ALIGN (0x4)
+                0x400091e8                _susrheap = .
+                0x4000b1e8                . = (. + _Minimum_Heap_Size)
+ *fill*         0x400091e8     0x2000 
+                0x4000b1e8                . = ALIGN (0x4)
+                0x4000b1e8                _eusrheap = .
 
-._usrstack      0x4000b1e4      0xc00 load address 0x0005c0c4
-                0x4000b1e4                . = ALIGN (0x4)
-                0x4000b1e4                _susrstack = .
-                0x4000bde4                . = (. + _Minimum_Stack_Size)
- *fill*         0x4000b1e4      0xc00 
-                0x4000bde4                . = ALIGN (0x4)
-                0x4000bde4                _eusrstack = .
-                0x4000bde4                _estack = .
+._usrstack      0x4000b1e8      0xc00 load address 0x0005c0c8
+                0x4000b1e8                . = ALIGN (0x4)
+                0x4000b1e8                _susrstack = .
+                0x4000bde8                . = (. + _Minimum_Stack_Size)
+ *fill*         0x4000b1e8      0xc00 
+                0x4000bde8                . = ALIGN (0x4)
+                0x4000bde8                _eusrstack = .
+                0x4000bde8                _estack = .
 
 ._AZ4186_NVRAM  0x81000000     0x1794
  *(AZ4186_NVRAM_SECTION)
  AZ4186_NVRAM_SECTION
                 0x81000000     0x1794 ./src/spiglb.o
                 0x81000000                nvram_struct
-                0x400091e4                PROVIDE (_pvHeapStart, _susrheap)
+                0x400091e8                PROVIDE (_pvHeapStart, _susrheap)
                 0x40010000                PROVIDE (_vStackTop, __top_Ram64)
 OUTPUT(spiralatrice.axf elf32-littlearm)
 
-.debug_info     0x00000000    0x522ce
+.debug_info     0x00000000    0x522e7
  .debug_info    0x00000000     0x5b9d ./src/Anybus.o
  .debug_info    0x00005b9d      0x3be ./src/I2C_Master.o
  .debug_info    0x00005f5b     0x2a86 ./src/az4186_can.o
@@ -6856,31 +6856,31 @@ OUTPUT(spiralatrice.axf elf32-littlearm)
  .debug_info    0x00019e1c      0xa75 ./src/lcd.o
  .debug_info    0x0001a891      0x697 ./src/main.o
  .debug_info    0x0001af28     0x1c7d ./src/mci.o
- .debug_info    0x0001cba5     0x70a7 ./src/params.o
- .debug_info    0x00023c4c     0x3231 ./src/popup.o
- .debug_info    0x00026e7d      0x6f8 ./src/rtcDS3231_newer.o
- .debug_info    0x00027575     0x4949 ./src/spi.o
- .debug_info    0x0002bebe     0x77bd ./src/spidbg.o
- .debug_info    0x0003367b     0x180e ./src/spiglb.o
- .debug_info    0x00034e89     0x2c1c ./src/spimis.o
- .debug_info    0x00037aa5     0x66fb ./src/spiutils.o
- .debug_info    0x0003e1a0     0x5f07 ./src/spiwin2.o
- .debug_info    0x000440a7       0xcb ./src/target.o
- .debug_info    0x00044172      0x872 ./src/vdip.o
- .debug_info    0x000449e4      0x235 ./src/xxtea.o
- .debug_info    0x00044c19      0x165 ./ff9/src/option/ccsbcs.o
- .debug_info    0x00044d7e       0x6f ./ff9/src/option/syscall.o
- .debug_info    0x00044ded     0x324e ./ff9/src/ff.o
- .debug_info    0x0004803b      0xbca ./CANopen_stack/LPC2388/CO_driver.o
- .debug_info    0x00048c05      0xdb2 ./CANopen_stack/LPC2388/co_od.o
- .debug_info    0x000499b7     0x1d90 ./CANopen_stack/CANopen.o
- .debug_info    0x0004b747      0xde8 ./CANopen_stack/CO_Emergency.o
- .debug_info    0x0004c52f      0xb44 ./CANopen_stack/CO_HBconsumer.o
- .debug_info    0x0004d073      0x9b6 ./CANopen_stack/CO_NMT_Heartbeat.o
- .debug_info    0x0004da29     0x1d73 ./CANopen_stack/CO_PDO.o
- .debug_info    0x0004f79c      0xf02 ./CANopen_stack/CO_SDO.o
- .debug_info    0x0005069e      0xe45 ./CANopen_stack/CO_SDOmaster.o
- .debug_info    0x000514e3      0xdeb ./CANopen_stack/CO_SYNC.o
+ .debug_info    0x0001cba5     0x70b7 ./src/params.o
+ .debug_info    0x00023c5c     0x3231 ./src/popup.o
+ .debug_info    0x00026e8d      0x6f8 ./src/rtcDS3231_newer.o
+ .debug_info    0x00027585     0x493d ./src/spi.o
+ .debug_info    0x0002bec2     0x77bd ./src/spidbg.o
+ .debug_info    0x0003367f     0x180e ./src/spiglb.o
+ .debug_info    0x00034e8d     0x2c1c ./src/spimis.o
+ .debug_info    0x00037aa9     0x66fb ./src/spiutils.o
+ .debug_info    0x0003e1a4     0x5f1c ./src/spiwin2.o
+ .debug_info    0x000440c0       0xcb ./src/target.o
+ .debug_info    0x0004418b      0x872 ./src/vdip.o
+ .debug_info    0x000449fd      0x235 ./src/xxtea.o
+ .debug_info    0x00044c32      0x165 ./ff9/src/option/ccsbcs.o
+ .debug_info    0x00044d97       0x6f ./ff9/src/option/syscall.o
+ .debug_info    0x00044e06     0x324e ./ff9/src/ff.o
+ .debug_info    0x00048054      0xbca ./CANopen_stack/LPC2388/CO_driver.o
+ .debug_info    0x00048c1e      0xdb2 ./CANopen_stack/LPC2388/co_od.o
+ .debug_info    0x000499d0     0x1d90 ./CANopen_stack/CANopen.o
+ .debug_info    0x0004b760      0xde8 ./CANopen_stack/CO_Emergency.o
+ .debug_info    0x0004c548      0xb44 ./CANopen_stack/CO_HBconsumer.o
+ .debug_info    0x0004d08c      0x9b6 ./CANopen_stack/CO_NMT_Heartbeat.o
+ .debug_info    0x0004da42     0x1d73 ./CANopen_stack/CO_PDO.o
+ .debug_info    0x0004f7b5      0xf02 ./CANopen_stack/CO_SDO.o
+ .debug_info    0x000506b7      0xe45 ./CANopen_stack/CO_SDOmaster.o
+ .debug_info    0x000514fc      0xdeb ./CANopen_stack/CO_SYNC.o
 
 .debug_abbrev   0x00000000     0x8f42
  .debug_abbrev  0x00000000      0x667 ./src/Anybus.o
@@ -7226,7 +7226,7 @@ OUTPUT(spiralatrice.axf elf32-littlearm)
  .debug_macro   0x00009899       0x9a ./CANopen_stack/CO_SDOmaster.o
  .debug_macro   0x00009933       0xac ./CANopen_stack/CO_SYNC.o
 
-.debug_line     0x00000000    0x115ed
+.debug_line     0x00000000    0x115eb
  .debug_line    0x00000000      0xec6 ./src/Anybus.o
  .debug_line    0x00000ec6      0x180 ./src/I2C_Master.o
  .debug_line    0x00001046      0x889 ./src/az4186_can.o
@@ -7254,124 +7254,124 @@ OUTPUT(spiralatrice.axf elf32-littlearm)
  .debug_line    0x00007e6d      0x62a ./src/popup.o
  .debug_line    0x00008497      0x2a1 ./src/rtcDS3231_newer.o
  .debug_line    0x00008738     0x1034 ./src/spi.o
- .debug_line    0x0000976c     0x108a ./src/spidbg.o
- .debug_line    0x0000a7f6      0x155 ./src/spiglb.o
- .debug_line    0x0000a94b      0xb51 ./src/spimis.o
- .debug_line    0x0000b49c     0x121e ./src/spiutils.o
- .debug_line    0x0000c6ba      0xd8d ./src/spiwin2.o
- .debug_line    0x0000d447      0x125 ./src/target.o
- .debug_line    0x0000d56c      0x47c ./src/vdip.o
- .debug_line    0x0000d9e8      0x3c9 ./src/xxtea.o
- .debug_line    0x0000ddb1       0xfa ./ff9/src/option/ccsbcs.o
- .debug_line    0x0000deab      0x176 ./ff9/src/option/syscall.o
- .debug_line    0x0000e021      0xe94 ./ff9/src/ff.o
- .debug_line    0x0000eeb5      0x409 ./CANopen_stack/LPC2388/CO_driver.o
- .debug_line    0x0000f2be      0x231 ./CANopen_stack/LPC2388/co_od.o
- .debug_line    0x0000f4ef      0x34e ./CANopen_stack/CANopen.o
- .debug_line    0x0000f83d      0x3a1 ./CANopen_stack/CO_Emergency.o
- .debug_line    0x0000fbde      0x36e ./CANopen_stack/CO_HBconsumer.o
- .debug_line    0x0000ff4c      0x36e ./CANopen_stack/CO_NMT_Heartbeat.o
- .debug_line    0x000102ba      0x6d5 ./CANopen_stack/CO_PDO.o
- .debug_line    0x0001098f      0x464 ./CANopen_stack/CO_SDO.o
- .debug_line    0x00010df3      0x49f ./CANopen_stack/CO_SDOmaster.o
- .debug_line    0x00011292      0x35b ./CANopen_stack/CO_SYNC.o
+ .debug_line    0x0000976c     0x1088 ./src/spidbg.o
+ .debug_line    0x0000a7f4      0x155 ./src/spiglb.o
+ .debug_line    0x0000a949      0xb51 ./src/spimis.o
+ .debug_line    0x0000b49a     0x121e ./src/spiutils.o
+ .debug_line    0x0000c6b8      0xd8d ./src/spiwin2.o
+ .debug_line    0x0000d445      0x125 ./src/target.o
+ .debug_line    0x0000d56a      0x47c ./src/vdip.o
+ .debug_line    0x0000d9e6      0x3c9 ./src/xxtea.o
+ .debug_line    0x0000ddaf       0xfa ./ff9/src/option/ccsbcs.o
+ .debug_line    0x0000dea9      0x176 ./ff9/src/option/syscall.o
+ .debug_line    0x0000e01f      0xe94 ./ff9/src/ff.o
+ .debug_line    0x0000eeb3      0x409 ./CANopen_stack/LPC2388/CO_driver.o
+ .debug_line    0x0000f2bc      0x231 ./CANopen_stack/LPC2388/co_od.o
+ .debug_line    0x0000f4ed      0x34e ./CANopen_stack/CANopen.o
+ .debug_line    0x0000f83b      0x3a1 ./CANopen_stack/CO_Emergency.o
+ .debug_line    0x0000fbdc      0x36e ./CANopen_stack/CO_HBconsumer.o
+ .debug_line    0x0000ff4a      0x36e ./CANopen_stack/CO_NMT_Heartbeat.o
+ .debug_line    0x000102b8      0x6d5 ./CANopen_stack/CO_PDO.o
+ .debug_line    0x0001098d      0x464 ./CANopen_stack/CO_SDO.o
+ .debug_line    0x00010df1      0x49f ./CANopen_stack/CO_SDOmaster.o
+ .debug_line    0x00011290      0x35b ./CANopen_stack/CO_SYNC.o
 
-.debug_str      0x00000000    0x38e02
- .debug_str     0x00000000    0x110c2 ./src/Anybus.o
-                              0x1182a (size before relaxing)
- .debug_str     0x000110c2     0xe805 ./src/I2C_Master.o
+.debug_str      0x00000000    0x38e03
+ .debug_str     0x00000000    0x110c3 ./src/Anybus.o
+                              0x1182b (size before relaxing)
+ .debug_str     0x000110c3     0xe805 ./src/I2C_Master.o
                               0x132cc (size before relaxing)
- .debug_str     0x0001f8c7     0x3907 ./src/az4186_can.o
-                              0x1c585 (size before relaxing)
- .debug_str     0x000231ce      0x236 ./src/az4186_dac.o
+ .debug_str     0x0001f8c8     0x3907 ./src/az4186_can.o
+                              0x1c586 (size before relaxing)
+ .debug_str     0x000231cf      0x236 ./src/az4186_dac.o
                               0x11be1 (size before relaxing)
- .debug_str     0x00023404      0x9aa ./src/az4186_eeprom_24c04.o
-                              0x16fe4 (size before relaxing)
- .debug_str     0x00023dae      0x2fb ./src/az4186_emc.o
+ .debug_str     0x00023405      0x9aa ./src/az4186_eeprom_24c04.o
+                              0x16fe5 (size before relaxing)
+ .debug_str     0x00023daf      0x2fb ./src/az4186_emc.o
                               0x129f7 (size before relaxing)
- .debug_str     0x000240a9     0x126c ./src/az4186_files.o
-                              0x165dd (size before relaxing)
- .debug_str     0x00025315      0x12e ./src/az4186_initHw.o
+ .debug_str     0x000240aa     0x126c ./src/az4186_files.o
+                              0x165de (size before relaxing)
+ .debug_str     0x00025316      0x12e ./src/az4186_initHw.o
                               0x12837 (size before relaxing)
- .debug_str     0x00025443     0x10cc ./src/az4186_program_codes.o
-                              0x1776b (size before relaxing)
- .debug_str     0x0002650f      0x893 ./src/az4186_temperature_compensation.o
-                              0x1bc4f (size before relaxing)
- .debug_str     0x00026da2      0x993 ./src/az4186_window_temperature_compensation.o
-                               0xc5e1 (size before relaxing)
- .debug_str     0x00027735      0x87f ./src/codelist.o
-                               0xcceb (size before relaxing)
- .debug_str     0x00027fb4       0xe9 ./src/crp.o
+ .debug_str     0x00025444     0x10cc ./src/az4186_program_codes.o
+                              0x1776c (size before relaxing)
+ .debug_str     0x00026510      0x893 ./src/az4186_temperature_compensation.o
+                              0x1bc50 (size before relaxing)
+ .debug_str     0x00026da3      0x993 ./src/az4186_window_temperature_compensation.o
+                               0xc5e2 (size before relaxing)
+ .debug_str     0x00027736      0x87f ./src/codelist.o
+                               0xccec (size before relaxing)
+ .debug_str     0x00027fb5       0xe9 ./src/crp.o
                                0x2495 (size before relaxing)
- .debug_str     0x0002809d      0x9bc ./src/diskio.o
-                              0x15ce7 (size before relaxing)
- .debug_str     0x00028a59       0x52 ./src/dma.o
+ .debug_str     0x0002809e      0x9bc ./src/diskio.o
+                              0x15ce8 (size before relaxing)
+ .debug_str     0x00028a5a       0x52 ./src/dma.o
                               0x11568 (size before relaxing)
- .debug_str     0x00028aab       0x1e ./src/fat_time.o
+ .debug_str     0x00028aac       0x1e ./src/fat_time.o
                               0x11e66 (size before relaxing)
- .debug_str     0x00028ac9      0x7d3 ./src/file_list.o
+ .debug_str     0x00028aca      0x7d3 ./src/file_list.o
                               0x1393a (size before relaxing)
- .debug_str     0x0002929c     0x1617 ./src/gui.o
-                               0xbe27 (size before relaxing)
- .debug_str     0x0002a8b3      0x303 ./src/i2c.o
-                              0x15989 (size before relaxing)
- .debug_str     0x0002abb6      0x1b1 ./src/inverse_v1.o
+ .debug_str     0x0002929d     0x1617 ./src/gui.o
+                               0xbe28 (size before relaxing)
+ .debug_str     0x0002a8b4      0x303 ./src/i2c.o
+                              0x1598a (size before relaxing)
+ .debug_str     0x0002abb7      0x1b1 ./src/inverse_v1.o
                                0x25ca (size before relaxing)
- .debug_str     0x0002ad67      0x534 ./src/lcd.o
+ .debug_str     0x0002ad68      0x534 ./src/lcd.o
                                0x511b (size before relaxing)
- .debug_str     0x0002b29b      0x280 ./src/main.o
-                              0x17298 (size before relaxing)
- .debug_str     0x0002b51b      0x937 ./src/mci.o
+ .debug_str     0x0002b29c      0x280 ./src/main.o
+                              0x17299 (size before relaxing)
+ .debug_str     0x0002b51c      0x937 ./src/mci.o
                               0x139c4 (size before relaxing)
- .debug_str     0x0002be52     0x26a8 ./src/params.o
-                              0x10815 (size before relaxing)
- .debug_str     0x0002e4fa      0xc07 ./src/popup.o
-                               0xe600 (size before relaxing)
- .debug_str     0x0002f101       0xa1 ./src/rtcDS3231_newer.o
+ .debug_str     0x0002be53     0x26a8 ./src/params.o
+                              0x10816 (size before relaxing)
+ .debug_str     0x0002e4fb      0xc07 ./src/popup.o
+                               0xe601 (size before relaxing)
+ .debug_str     0x0002f102       0xa1 ./src/rtcDS3231_newer.o
                               0x11641 (size before relaxing)
- .debug_str     0x0002f1a2     0x1e18 ./src/spi.o
-                              0x1f086 (size before relaxing)
- .debug_str     0x00030fba     0x2b37 ./src/spidbg.o
-                              0x20511 (size before relaxing)
- .debug_str     0x00033af1      0x1b1 ./src/spiglb.o
-                               0x78ae (size before relaxing)
- .debug_str     0x00033ca2      0xb34 ./src/spimis.o
-                              0x1aa53 (size before relaxing)
- .debug_str     0x000347d6      0xd03 ./src/spiutils.o
-                              0x1eb72 (size before relaxing)
- .debug_str     0x000354d9     0x1556 ./src/spiwin2.o
-                              0x1edbf (size before relaxing)
- .debug_str     0x00036a2f       0x44 ./src/target.o
+ .debug_str     0x0002f1a3     0x1e18 ./src/spi.o
+                              0x1f078 (size before relaxing)
+ .debug_str     0x00030fbb     0x2b37 ./src/spidbg.o
+                              0x20512 (size before relaxing)
+ .debug_str     0x00033af2      0x1b1 ./src/spiglb.o
+                               0x78af (size before relaxing)
+ .debug_str     0x00033ca3      0xb34 ./src/spimis.o
+                              0x1aa54 (size before relaxing)
+ .debug_str     0x000347d7      0xd03 ./src/spiutils.o
+                              0x1eb73 (size before relaxing)
+ .debug_str     0x000354da     0x1556 ./src/spiwin2.o
+                              0x1edc0 (size before relaxing)
+ .debug_str     0x00036a30       0x44 ./src/target.o
                               0x10c17 (size before relaxing)
- .debug_str     0x00036a73      0x3bc ./src/vdip.o
-                              0x15aa1 (size before relaxing)
- .debug_str     0x00036e2f      0x108 ./src/xxtea.o
-                               0xac47 (size before relaxing)
- .debug_str     0x00036f37       0x50 ./ff9/src/option/ccsbcs.o
+ .debug_str     0x00036a74      0x3bc ./src/vdip.o
+                              0x15aa2 (size before relaxing)
+ .debug_str     0x00036e30      0x108 ./src/xxtea.o
+                               0xac48 (size before relaxing)
+ .debug_str     0x00036f38       0x50 ./ff9/src/option/ccsbcs.o
                                0x29a1 (size before relaxing)
- .debug_str     0x00036f87       0x1c ./ff9/src/option/syscall.o
+ .debug_str     0x00036f88       0x1c ./ff9/src/option/syscall.o
                                0x2f3e (size before relaxing)
- .debug_str     0x00036fa3      0xacd ./ff9/src/ff.o
+ .debug_str     0x00036fa4      0xacd ./ff9/src/ff.o
                               0x11e0b (size before relaxing)
- .debug_str     0x00037a70      0x2ba ./CANopen_stack/LPC2388/CO_driver.o
+ .debug_str     0x00037a71      0x2ba ./CANopen_stack/LPC2388/CO_driver.o
                               0x13e63 (size before relaxing)
- .debug_str     0x00037d2a      0x2e5 ./CANopen_stack/LPC2388/co_od.o
+ .debug_str     0x00037d2b      0x2e5 ./CANopen_stack/LPC2388/co_od.o
                                0x4a08 (size before relaxing)
- .debug_str     0x0003800f      0x630 ./CANopen_stack/CANopen.o
+ .debug_str     0x00038010      0x630 ./CANopen_stack/CANopen.o
                                0x6017 (size before relaxing)
- .debug_str     0x0003863f      0x13a ./CANopen_stack/CO_Emergency.o
+ .debug_str     0x00038640      0x13a ./CANopen_stack/CO_Emergency.o
                                0x41f3 (size before relaxing)
- .debug_str     0x00038779       0xda ./CANopen_stack/CO_HBconsumer.o
+ .debug_str     0x0003877a       0xda ./CANopen_stack/CO_HBconsumer.o
                                0x4455 (size before relaxing)
- .debug_str     0x00038853       0xa4 ./CANopen_stack/CO_NMT_Heartbeat.o
+ .debug_str     0x00038854       0xa4 ./CANopen_stack/CO_NMT_Heartbeat.o
                                0x4391 (size before relaxing)
- .debug_str     0x000388f7      0x2ae ./CANopen_stack/CO_PDO.o
+ .debug_str     0x000388f8      0x2ae ./CANopen_stack/CO_PDO.o
                                0x48b4 (size before relaxing)
- .debug_str     0x00038ba5       0x8f ./CANopen_stack/CO_SDO.o
+ .debug_str     0x00038ba6       0x8f ./CANopen_stack/CO_SDO.o
                                0x3a08 (size before relaxing)
- .debug_str     0x00038c34       0xbc ./CANopen_stack/CO_SDOmaster.o
+ .debug_str     0x00038c35       0xbc ./CANopen_stack/CO_SDOmaster.o
                                0x3a9e (size before relaxing)
- .debug_str     0x00038cf0      0x112 ./CANopen_stack/CO_SYNC.o
+ .debug_str     0x00038cf1      0x112 ./CANopen_stack/CO_SYNC.o
                                0x4443 (size before relaxing)
 
 .comment        0x00000000       0xe0

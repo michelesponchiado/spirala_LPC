@@ -709,7 +709,7 @@ unsigned char ucIamInTaraturaStatica(void);
 
 
 #define defMaxCharLavoroString_Position 2
-#define defMaxCharLavoroString_Numpezzi 4
+#define defMaxCharLavoroString_Numpezzi 5
 #define defMaxCharLavoroString_Ohm 6
 typedef struct _TipoPrivatoLavoro{
 	TipoLavoro lavoro;
