@@ -132,6 +132,8 @@ For more information about the syntax of the linker scripts and how to modify th
 // 3.36
 // work almost OK with LPCXpresso
 // * MASSIMO NUMERO PEZZI IN PRODUZIONE PORTATO A 99'999  , ERA 9'999
+// * minimo diametro mandrino portato a 0.2mm, la risoluzione in inch è 0.001 inch = 0.02mm = 2 centesimi di mm OK
+// * minimo diametro filo portato a 0.02mm, la risoluzione in inch è 0.0001 inch = 0.002mm = 2 micron OK
 //
 // 3.35
 // recompiled under LPCXpresso
