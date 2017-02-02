@@ -23,4 +23,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Debug/boot_lpc2388.elf</name>
+			<type>1</type>
+			<location>/home/michele/LPCXpresso/workspace/spiralatrice/boot_lpc2388.elf</location>
+		</link>
+	</linkedResources>
 </projectDescription>

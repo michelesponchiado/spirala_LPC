@@ -422,6 +422,7 @@ end_data_init_loop:
 /*
  * Clear .bss (zero'ed space)
  */
+
 		LDR r5, =Lbss_end		// Load end address of BSS...
 		LDR r5, [r5]			//...from Global Section Table
 start_bss_init_loop:

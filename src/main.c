@@ -125,9 +125,15 @@ For more information about the syntax of the linker scripts and how to modify th
 // MAX 2 CARATTERI
 //
 //
-#define defMinorNumFirmware_Scheda "34" 
+#define defMinorNumFirmware_Scheda "36"
 
 // version history
+//
+// 3.36
+// work almost OK with LPCXpresso
+//
+// 3.35
+// recompiled under LPCXpresso
 //
 // 3.34
 // * CHECKED OK when temperature compensation is not enabled, the temperature compensation parameters are not shown in the product codes archive-show window

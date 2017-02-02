@@ -2116,7 +2116,7 @@ void spi_main(void){
 	extern unsigned char ucNeedToRefreshLcd(void);
 	// verifies if i2c bus should be unlocked...
 	void v_verify_unlock_i2c_bus(void);
-	//unsigned char ucTouchPressed;
+	unsigned char ucTouchPressed;
 	void v_handle_eeprom(void);
 	
 //	extern void main_anybus(void);
@@ -2145,9 +2145,9 @@ void spi_main(void){
 		inpToOut();
 		updOut();
 		// verifico se touch pressed
-		//ucTouchPressed=ucBackGroundCtrlLcd();
+		ucTouchPressed=ucBackGroundCtrlLcd();
 		vHandleButtons();
-		if ( //  ucTouchPressed
+		if (  // ucTouchPressed
 			 //||((ucContaLoopMain&0x0F)==0)
 			 //||
 			 ucNeedToRefreshLcd()
