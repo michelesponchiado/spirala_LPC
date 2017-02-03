@@ -37,9 +37,9 @@ PROGRAMMA prgList[NUM_PROGRAMMI]
      "  ",                /* Codice programma. */
      0,                   /* Numero del programma successivo. */
      0,                   /* Numero del programma precedente. */
-     10.0,                /* Velocit… di produzione in m/min. */
+     10.0,                /* Velocitï¿½ di produzione in m/min. */
      2000.,               /* Giri/minuto mandrino. */
-     {1.0,1.0},           /* Assorbimento delle frizioni in ampŠre. */
+     {1.0,1.0},           /* Assorbimento delle frizioni in ampï¿½re. */
      0.0,                 /* Posizione di pretaglio. */
      0.45,                /* Diametro del filo/i in mm. */
      1.7,                 /* Diametro del mandrino in mm. */
@@ -73,8 +73,8 @@ MACPARMS macParms
        3,                   /* nPezzi avviso */
        10,                  /* nsec lampada accesa */
        10,                  /* Numero di spire di pretaglio. */
-       {27.2,34.4},         /* Interasse coltello-mandrino, alla posizione pi—
-                   bassa e pi— alta. */
+       {27.2,34.4},         /* Interasse coltello-mandrino, alla posizione piï¿½
+                   bassa e piï¿½ alta. */
        {85.3,80.},          /* Diametro delle frizioni in mm. */
        59.5,                /* Diametro del coltello in mm. */
        2                    /* Numero di secondi di attesa prima dell' avvio. */
@@ -83,9 +83,9 @@ MACPARMS macParms
 #endif
  ;
 
-/* Taratura dei canali analogici. Non Š unica per ogni canale,
+/* Taratura dei canali analogici. Non ï¿½ unica per ogni canale,
    ma ne esiste una per ogni portata.
-   Per ora Š prevista la taratura dei soli canali 0 (misura dinamica)
+   Per ora ï¿½ prevista la taratura dei soli canali 0 (misura dinamica)
    ed 1 (misura statica).
 */
 /* Variabile che ha il compito di puntare al membro dell' array taratura
@@ -106,21 +106,21 @@ bit isPressed;
 bit criticLav;
 /* Semaforo che regola l' accesso all' adc converter. */
 bit criticMis;
-/* Semaforo che regola l' accesso alle variabili gapTime e velocit…. */
+/* Semaforo che regola l' accesso alle variabili gapTime e velocitï¿½. */
 bit updVel;
 bit checkPassw;
 bit checkedPassw;
 bit myTI;
 bit watchDog;
 /*bit txTest;*/
-/*  Bit che vale 1 se il lotto corrente Š stato terminato correttamente,
-    cioŠ sono stati eseguiti tutti i pezzi richiesti. */
+/*  Bit che vale 1 se il lotto corrente ï¿½ stato terminato correttamente,
+    cioï¿½ sono stati eseguiti tutti i pezzi richiesti. */
 bit RunningPrgEndOk;
-/*  Bit che vale 1 se il lotto corrente Š stato terminato correttamente,
-    ed il prossimo programma pu• essere eseguito in automatico senza
+/*  Bit che vale 1 se il lotto corrente ï¿½ stato terminato correttamente,
+    ed il prossimo programma puï¿½ essere eseguito in automatico senza
     fermo macchina. */
 bit NextPrgAutomatic;
-/*  Bit che vale 1 se c' Š un programma in esecuzione. */
+/*  Bit che vale 1 se c' ï¿½ un programma in esecuzione. */
 bit PrgRunning;
 /*  Indicatore di esecuzione taglio asincrono. */
 bit TaglioAsincrono;
@@ -261,7 +261,7 @@ unsigned char* pDACPort =
 #endif
 
 
-unsigned short alarms;
+uint32_t alarms;
 xdat unsigned char alr_status;
 
 /* gestione tastiera */

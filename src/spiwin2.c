@@ -272,6 +272,21 @@ unsigned char ucPurgeManualCodesInJobList(void){
 	return 1;
 }
 
+// purge empty manual jobs from the list
+unsigned char ucPurgeManualCodesEmptyFromJobList(void)
+{
+	unsigned char xdata i;
+	for (i=0;i<nvram_struct.codelist.ucNumElem;i++)
+	{
+		TipoStructCodeJobList * p = &nvram_struct.codelist.codeJobList[i];
+		if (p->ucManual && !p->jobs.ucNumLavoriInLista)
+		{
+			ucDeleteCodeInJobList_Idx(i);
+		}
+	}
+	return 1;
+}
+
 TipoLavoro *pFindManualCodeInJobList(void){
 	xdata unsigned char i;
 	for (i=0;i<nvram_struct.codelist.ucNumElem;i++){
@@ -1323,6 +1338,19 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 			sprintf(im_lottorapido[0].pc,im_lottorapido[0].ucFmtField,privato_lavoro.lavoro.uiNumeroPezzi);
 			sprintf(im_lottorapido[1].pc,im_lottorapido[1].ucFmtField,privato_lavoro.lavoro.fOhm);
 			sprintf(im_lottorapido[2].pc,im_lottorapido[2].ucFmtField,privato_lavoro.lavoro.ucDescrizione);
+			// se numero fili = 0, recupera ultimo codice inserito manualmente
+			// se numero fili = 0, imposta ad 1
+			if (atoi(im_lottorapido[5].pc) == 0)
+			{
+
+				sprintf(im_lottorapido[5].pc, im_lottorapido[5].ucFmtField, 1);
+			}
+			// se fornitore non impostato, assegna 0
+			if (!isdigit(his.ucFornitore[0]))
+			{
+				his.ucFornitore[0] = '0';
+				his.ucFornitore[1] = 0x00;
+			}
 			nvram_struct.ucComingToControlloProduzioneFromJobs=0;
 			vSetStatusCurrentWindow(enumWindowStatus_Active);
 			mystrcpy(ucCodiceIngresso_Manuale,his.ucCodice,sizeof(ucCodiceIngresso_Manuale)-1);
@@ -1373,7 +1401,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 								break;
 							}
 
-							// chiamo la procedura che si incarica di inserireil codice prodotto in liosta, se non esiste
+							// chiamo la procedura che si incarica di inserireil codice prodotto in lista, se non esiste
 							vVerifyInsertCodiceProdotto(his.ucCodice);
 
 
@@ -1474,7 +1502,12 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 
 			// riformatto diametro filo e diametro mandrino
 			his.fAux=atof(his.ucDiametroFilo);
-			if (nvram_struct.actUM==UM_IN){
+			if (nvram_struct.actUM==UM_IN)
+			{
+				if (his.fAux < MIN_DIAM_FILO * MM_TO_INCH)
+				{
+					his.fAux = MIN_DIAM_FILO * MM_TO_INCH;
+				}
 				sprintf(his.ucDiametroFilo,im_lottorapido[enum_campi_LD_diametrofilo].ucFmtFieldInch,his.fAux);
 				// elimino lo zero iniziale, non trovo al momento altro modo!!!!!
 				if (his.ucDiametroFilo[0]&&(his.ucDiametroFilo[0]!='.')){
@@ -1482,17 +1515,27 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 				}
 			}
 			else
+			{
+				if (his.fAux < MIN_DIAM_FILO)
+				{
+					his.fAux = MIN_DIAM_FILO;
+				}
 				sprintf(his.ucDiametroFilo,im_lottorapido[enum_campi_LD_diametrofilo].ucFmtField,his.fAux);
+			}
 			his.ucDiametroFilo[defCodice_MaxCharDiametroFilo]=0;
 
 			his.fAux=atof(his.ucDiametroMandrino);
 			// voglio evitare overflow... siccome la precisione decimale non viene mai sacrificata dal C
 			// se viene inserito 20.0 la sprintf la fa diventare 20.00 e posso corrompere la mia stringa...
 			if (his.fAux>=10){
-				sprintf(his.ucDiametroMandrino,"%-4.1f",his.fAux);
+				snprintf(his.ucDiametroMandrino, sizeof(his.ucDiametroMandrino), "%-4.1f",his.fAux);
 			}
 			else{
 				if (nvram_struct.actUM==UM_IN){
+					if (his.fAux < MIN_DIAM_MD * MM_TO_INCH)
+					{
+						his.fAux = MIN_DIAM_MD * MM_TO_INCH;
+					}
 					sprintf(his.ucDiametroMandrino,im_lottorapido[enum_campi_LD_diametromandrino].ucFmtFieldInch,his.fAux);
 					// elimino lo zero iniziale, non trovo al momento altro modo!!!!!
 					if (his.ucDiametroMandrino[0]&&(his.ucDiametroMandrino[0]!='.')){
@@ -1500,7 +1543,14 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 					}
 				}
 				else
-					sprintf(his.ucDiametroMandrino,im_lottorapido[enum_campi_LD_diametromandrino].ucFmtField,his.fAux);
+				{
+					if (his.fAux < MIN_DIAM_MD)
+					{
+						his.fAux = MIN_DIAM_MD;
+					}
+
+					snprintf(his.ucDiametroMandrino, sizeof(his.ucDiametroMandrino), im_lottorapido[enum_campi_LD_diametromandrino].ucFmtField,his.fAux);
+				}
 			}
 			his.ucDiametroMandrino[defCodice_MaxCharDiametroMandrino]=0;
 
@@ -1601,8 +1651,15 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 					sprintf(hw.ucString,"%6.3f",nvram_struct.resspec[i]);
 				ucPrintStaticButton(hw.ucString,defLD_numfili_row-14+i*16,defLD_modo_col+3*16+16+8+10*8,enumFontSmall,enumLD_OhmM_filo_1+i,defLCD_Color_Trasparente);
 			}
-
-			vAddStandardButtonsOk(enumLD_Sx);
+			// if not all of the parameters are valid, no OK button will be shown
+			if (privato_lavoro.lavoro.ucValidKey !=defLavoroValidoKey)
+			{
+				vAddStandardButtons(enumLD_Sx);
+			}
+			else
+			{
+				vAddStandardButtonsOk(enumLD_Sx);
+			}
 
 			
 			return 1;

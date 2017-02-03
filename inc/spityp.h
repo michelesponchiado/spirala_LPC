@@ -1,6 +1,7 @@
 #ifndef _SPITYP
 
 #define _SPITYP
+#include <stdint.h>
 #include "spicost.h"
 #include "lcd.h"
 #include "minmax.h"
@@ -45,7 +46,7 @@ typedef enum {
 
 
 // la percentuale di distanziazione deve avere un valore massimo che renda facile
-// convertirla in un numero fra 0 ed 1, così usiamo un valore massimo che sia un certo numero di shift di 1
+// convertirla in un numero fra 0 ed 1, cosï¿½ usiamo un valore massimo che sia un certo numero di shift di 1
 // numero max di shift della percentuale di distanziazione
 #define defMaxNumShiftPercDistanzia (15)
 // valore massimo della percentuale di distanziazione: 1<<15=0x8000
@@ -92,7 +93,7 @@ typedef struct _TARATURA {
    // Offset come floating point e come intero. 
    float o;
    signed short int osh;
-   // Primo punto di misura. Il primo punto non è sempre 0.  
+   // Primo punto di misura. Il primo punto non ï¿½ sempre 0.  
    float p0;
    // Secondo punto di misura. 
    float p;
@@ -110,7 +111,7 @@ typedef struct _TARATURA {
 // versione attuale del file di definizione dei pars macchina
 #define defMacParmsFormatVersion 5
 // sono stati aggiunti i due parametri di gestione della bandella
-// la versione 2 è uguale alla versione 1, però nella versione 1 c'era un errore
+// la versione 2 ï¿½ uguale alla versione 1, perï¿½ nella versione 1 c'era un errore
 // nel calcolo del crc!!!!
 // nella versione 3 aggiungo parametro abilitazione lampada segnalazione allarme
 
@@ -118,7 +119,7 @@ typedef struct _TARATURA {
 typedef struct _MACPARMS_V0 {
 	unsigned int uiMacParmsFormatVersion; // versione del formato di calibrazione: si parte da 0
 	unsigned char ucCrc; // crc: xor invertito di tutti i char che seguono...
-	/* Numero di impulsi/giro, considerandoli gi… moltiplicati per
+	/* Numero di impulsi/giro, considerandoli giï¿½ moltiplicati per
 	   il numero delle fasi. 
 	*/
 	unsigned short impGiro;
@@ -126,7 +127,7 @@ typedef struct _MACPARMS_V0 {
 	unsigned int rpm_frizioni[NUM_FRIZIONI]; /* Max rpm frizioni. */
 	unsigned int rpm_mandrino;               /* Max rpm mandrino. */
 	unsigned short lenSemigiro;
-	unsigned char modo;         /* Modalit… di produzione: L o L+R. */
+	unsigned char modo;         /* Modalitï¿½ di produzione: L o L+R. */
 	unsigned char ucMaxNumFili;  // numero massimo di fili: 1 2 o 3???
 	/* Numero di pezzi prima della fine del lotto raggiunti i quali
 	   si deve far lampeggiare la lampada di segnalazione lotto
@@ -164,7 +165,7 @@ typedef struct _MACPARMS_V2 {
 	unsigned int rpm_frizioni[NUM_FRIZIONI]; /* Max rpm frizioni. */
 	unsigned int rpm_mandrino;               /* Max rpm mandrino. */
 	unsigned short lenSemigiro;
-	unsigned char modo;         /* Modalit… di produzione: L o L+R. */
+	unsigned char modo;         /* Modalitï¿½ di produzione: L o L+R. */
 	unsigned char ucMaxNumFili;  // numero massimo di fili: 1 2 o 3???
 	/* Numero di pezzi prima della fine del lotto raggiunti i quali
 	   si deve far lampeggiare la lampada di segnalazione lotto
@@ -195,13 +196,13 @@ typedef struct _MACPARMS_V2 {
 	unsigned char uc_1Encoder_0Potenziometri;
 	// abilitazione a passaggio automatico da una comemssa alla successiva
 	unsigned char ucEnableCommesseAutomatiche;
-	// char che indica se è abilitata la quinta portata
+	// char che indica se ï¿½ abilitata la quinta portata
 	unsigned char ucAbilitaQuintaPortata;
 	// un char per indicare se pilotaggio taglio/pretaglio usa sensore o no
 	unsigned char ucUsaSensoreTaglio;
 	// posizione minima e massima del coltello, tolleranza nel posizionamento del coltello; [step a/d]
 	unsigned int uiMinPosColtello_StepAD,uiMaxPosColtello_StepAD,uiTolerancePosColtello_StepAD;
-	// valore massimo da dare al dac quando si è in modo slow
+	// valore massimo da dare al dac quando si ï¿½ in modo slow
 	unsigned char ucSlowDacColtello;
 	// guadagno per il controllo del coltello [0..255]
 	unsigned char ucGainDacColtello;
@@ -221,7 +222,7 @@ typedef struct _MACPARMS_V3 {
 	unsigned int rpm_frizioni[NUM_FRIZIONI]; /* Max rpm frizioni. */
 	unsigned int rpm_mandrino;               /* Max rpm mandrino. */
 	unsigned short lenSemigiro;
-	unsigned char modo;         /* Modalit… di produzione: L o L+R. */
+	unsigned char modo;         /* Modalitï¿½ di produzione: L o L+R. */
 	unsigned char ucMaxNumFili;  // numero massimo di fili: 1 2 o 3???
 	/* Numero di pezzi prima della fine del lotto raggiunti i quali
 	   si deve far lampeggiare la lampada di segnalazione lotto
@@ -252,13 +253,13 @@ typedef struct _MACPARMS_V3 {
 	unsigned char uc_1Encoder_0Potenziometri;
 	// abilitazione a passaggio automatico da una comemssa alla successiva
 	unsigned char ucEnableCommesseAutomatiche;
-	// char che indica se è abilitata la quinta portata
+	// char che indica se ï¿½ abilitata la quinta portata
 	unsigned char ucAbilitaQuintaPortata;
 	// un char per indicare se pilotaggio taglio/pretaglio usa sensore o no
 	unsigned char ucUsaSensoreTaglio;
 	// posizione minima e massima del coltello, tolleranza nel posizionamento del coltello; [step a/d]
 	unsigned int uiMinPosColtello_StepAD,uiMaxPosColtello_StepAD,uiTolerancePosColtello_StepAD;
-	// valore massimo da dare al dac quando si è in modo slow
+	// valore massimo da dare al dac quando si ï¿½ in modo slow
 	unsigned char ucSlowDacColtello;
 	// guadagno per il controllo del coltello [0..255]
 	unsigned char ucGainDacColtello;
@@ -291,7 +292,7 @@ typedef struct _MACPARMS_V4 {
 	unsigned int rpm_frizioni[NUM_FRIZIONI]; /* Max rpm frizioni. */
 	unsigned int rpm_mandrino;               /* Max rpm mandrino. */
 	unsigned short lenSemigiro;
-	unsigned char modo;         /* Modalit… di produzione: L o L+R. */
+	unsigned char modo;         /* Modalitï¿½ di produzione: L o L+R. */
 	unsigned char ucMaxNumFili;  // numero massimo di fili: 1 2 o 3???
 	/* Numero di pezzi prima della fine del lotto raggiunti i quali
 	   si deve far lampeggiare la lampada di segnalazione lotto
@@ -322,13 +323,13 @@ typedef struct _MACPARMS_V4 {
 	unsigned char uc_1Encoder_0Potenziometri;
 	// abilitazione a passaggio automatico da una comemssa alla successiva
 	unsigned char ucEnableCommesseAutomatiche;
-	// char che indica se è abilitata la quinta portata
+	// char che indica se ï¿½ abilitata la quinta portata
 	unsigned char ucAbilitaQuintaPortata;
 	// un char per indicare se pilotaggio taglio/pretaglio usa sensore o no
 	unsigned char ucUsaSensoreTaglio;
 	// posizione minima e massima del coltello, tolleranza nel posizionamento del coltello; [step a/d]
 	unsigned int uiMinPosColtello_StepAD,uiMaxPosColtello_StepAD,uiTolerancePosColtello_StepAD;
-	// valore massimo da dare al dac quando si è in modo slow
+	// valore massimo da dare al dac quando si ï¿½ in modo slow
 	unsigned char ucSlowDacColtello;
 	// guadagno per il controllo del coltello [0..255]
 	unsigned char ucGainDacColtello;
@@ -363,7 +364,7 @@ typedef struct _MACPARMS {
 	unsigned int rpm_frizioni[NUM_FRIZIONI]; /* Max rpm frizioni. */
 	unsigned int rpm_mandrino;               /* Max rpm mandrino. */
 	unsigned short lenSemigiro;
-	unsigned char modo;         /* Modalit… di produzione: L o L+R. */
+	unsigned char modo;         /* Modalitï¿½ di produzione: L o L+R. */
 	unsigned char ucMaxNumFili;  // numero massimo di fili: 1 2 o 3???
 	/* Numero di pezzi prima della fine del lotto raggiunti i quali
 	   si deve far lampeggiare la lampada di segnalazione lotto
@@ -394,13 +395,13 @@ typedef struct _MACPARMS {
 	unsigned char uc_1Encoder_0Potenziometri;
 	// abilitazione a passaggio automatico da una comemssa alla successiva
 	unsigned char ucEnableCommesseAutomatiche;
-	// char che indica se è abilitata la quinta portata
+	// char che indica se ï¿½ abilitata la quinta portata
 	unsigned char ucAbilitaQuintaPortata;
 	// un char per indicare se pilotaggio taglio/pretaglio usa sensore o no
 	unsigned char ucUsaSensoreTaglio;
 	// posizione minima e massima del coltello, tolleranza nel posizionamento del coltello; [step a/d]
 	unsigned int uiMinPosColtello_StepAD,uiMaxPosColtello_StepAD,uiTolerancePosColtello_StepAD;
-	// valore massimo da dare al dac quando si è in modo slow
+	// valore massimo da dare al dac quando si ï¿½ in modo slow
 	unsigned char ucSlowDacColtello;
 	// guadagno per il controllo del coltello [0..255]
 	unsigned char ucGainDacColtello;
@@ -473,7 +474,7 @@ typedef struct StructTipoInfotest{
 // 
 // 
 // fCoeffsCalibraLcd
-// array che contiene i coefficienti di calibrazione lcd, organizzati così:
+// array che contiene i coefficienti di calibrazione lcd, organizzati cosï¿½:
 // i coefficienti sono sempre [a b c d] prima per il calcolo di X, poi per il calcolo di Y
 // nell'ordine:
 // quadrato Q1=P0P1P4P5, quadrato Q2=P1P2P5P6, quadrato Q3=P2P3P6P7, quadrato Q4=P4P5P8P9, quadrato Q5=P5P6P9PA,
@@ -572,12 +573,12 @@ extern TipoStructTempoPerResistenza xdata TPR;
 extern unsigned long lastRo;
 extern unsigned char xdata ucEliminaPrimoPezzo;
 
-	// minimo tempo ammesso per timeout spaziatore giù [ms]
+	// minimo tempo ammesso per timeout spaziatore giï¿½ [ms]
 	// occhio che questo tempo viene moltiplicato per def_timeout_spaziatore_factor come maergine di sicurezza
 	#define defMinTimeoutSpaziatoreDown_millisecondi 750
-	// minimo tempo ammesso per timeout spaziatore giù [numero di periodi interrupt=5ms]
+	// minimo tempo ammesso per timeout spaziatore giï¿½ [numero di periodi interrupt=5ms]
 	#define defMinTimeoutSpaziatoreDown_NumT (defMinTimeoutSpaziatoreDown_millisecondi/PeriodoIntMs)
-	// il timeout distanziatore giù quante volte deve essere rispetto il timeout minimo? impostare >1, ad esempio 2
+	// il timeout distanziatore giï¿½ quante volte deve essere rispetto il timeout minimo? impostare >1, ad esempio 2
 	#define def_timeout_spaziatore_factor 2
 
 	// stati possibili del coltello in relazione alla distanziazione

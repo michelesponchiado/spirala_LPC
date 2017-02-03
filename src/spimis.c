@@ -202,8 +202,6 @@ TipoStructLog production_log;
 TipoRecordLog *plog;
 
 
-// per simulare l'encoder...
-//#define defSimulaEncoder
 #ifdef defSimulaEncoder
 	#warning
     #warning ******************************

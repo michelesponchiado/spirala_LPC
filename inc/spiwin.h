@@ -622,8 +622,10 @@ typedef struct _TipoStructInfoFieldCodice{
 	#define enumStr20_spindle_grinding_stop 288
 	#define enumStr20_spindle_grinding_run_help 289
 	#define enumStr20_spindle_grinding_stop_help 290
+	#define enumStr20_reset_pieces_done 291
+	#define enumStr20_alarm_wire_tangled_speed 292
 
-	#define enumStr20_NumOf					291
+	#define enumStr20_NumOf					293
 
 typedef int enumStringhe20char;
 

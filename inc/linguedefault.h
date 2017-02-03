@@ -1,7 +1,3 @@
-#ifdef defLocalMain_EsportaLingue
-extern "C" {
-#endif
-
 #ifndef def_LingueDefault_h_included
 #define def_LingueDefault_h_included
 #ifdef defLocalMain_EsportaLingue
@@ -274,15 +270,15 @@ extern "C" {
 	"TEMPO PRESEPARAZIONE",			// tempo impiegato dal distanziatore a scendere da posizione alta a posizione di distanziazione
 	"SEPARATORE",			    // " spacer dn " string: indica il comando di discesa spaziatore
 	"POSIZIONE:",			    // nel menu di impostazione dei parametri di distanziazione; indica l'indice della distanziazione corrente: 1.,2,...,20
-	"spire",			  // nel menu di impostazione dei parametri di distanziazione; indica l'unità di misura del numero di spire (spire/coils)	
+	"spire",			  // nel menu di impostazione dei parametri di distanziazione; indica l'unitï¿½ di misura del numero di spire (spire/coils)	
 	"Compensazione Temp.",  // temperature compensation [enabled/disabled]
 	"Sens.temp.sconnesso",  // temperature compensation alarm: probe open
 	"Temp. fuori scala-",  // temperature compensation alarm: probe underrange
 	"Temp. fuori scala+",  // temperature compensation alarm: probe overrange
 	"Timeout lettura",  // temperature compensation alarm: measure timeout
 	"Temp.Comp",  // use temperature compensation 
-	"Coeff.Temperatura",  // temperature coefficient [10-6/°C]
-	"Std a 20*C",  // valore standard misurato @ 20°C
+	"Coeff.Temperatura",  // temperature coefficient [10-6/ï¿½C]
+	"Std a 20*C",  // valore standard misurato @ 20ï¿½C
 	"CoefT",  // fattore di temperatura: max 5 char
 	
 	"Par.Comp.Temp.", // title of window for temperature compensation parameters
@@ -290,7 +286,7 @@ extern "C" {
 	"K1",				// short label (max 5 chars) for 1st calibration point, coefficient K value 1
 	"T2",				// short label (max 5 chars) for 2nd calibration point, temperature value 2
 	"K2",				// short label (max 5 chars) for 2nd calibration point, coefficient K value 2
-	"alfa",				// short label (max 5 chars) for alfa factor used in formula R=R0*(1+alfa*(t-20°C))
+	"alfa",				// short label (max 5 chars) for alfa factor used in formula R=R0*(1+alfa*(t-20ï¿½C))
 	"Temperatura",				// title of window where temperature calibration points are input
 	"Coeff. K",				// title of window where coefficients K calibration points are input
 	"Alfa",				// title of window where alfa is input
@@ -301,6 +297,8 @@ extern "C" {
 	"STOP",	// grinding NOT running
 	"STOP per fermare",	// grinding running help
 	"START per iniziare",	// grinding NOT running help
+	"Azzero pezzi ?",	// azzero pezzi gia' prodotti?
+	"err. velocita' filo",	// errore nella velocitÃ  della ruota di contrasto: filo aggrovigliato?
 		
 };
 
@@ -597,7 +595,7 @@ extern "C" {
 	"Separ.adv.time",			// tempo impiegato dal distanziatore a scendere da posizione alta a posizione di distanziazione
 	"SEPARATOR DN",			// " spacer dn " string: indica il comando di discesa spaziatore
 	"POSITION:",			  // nel menu di impostazione dei parametri di distanziazione; indica l'indice della distanziazione corrente: 1.,2,...,20
-	"coils",			  // nel menu di impostazione dei parametri di distanziazione; indica l'unità di misura del numero di spire (spire/coils)
+	"coils",			  // nel menu di impostazione dei parametri di distanziazione; indica l'unitï¿½ di misura del numero di spire (spire/coils)
 	"Temperature compens.",  // temperature compensation [enabled/disabled]
 	"Probe open",  // temperature compensation alarm: probe open
 	"Probe underrange",  // temperature compensation alarm: probe underrange
@@ -605,7 +603,7 @@ extern "C" {
 	"Read timeout",  // temperature compensation alarm: measure timeout
 	"Temp.Comp",  // use temperature compensation 
 	"Temperature Coeff.",  // temperature coefficient
-	"Std @ 20*C",  // valore standard misurato @ 20°C
+	"Std @ 20*C",  // valore standard misurato @ 20ï¿½C
 	"TCoef",  // fattore di temperatura: max 5 char
 	
 	"Temp.Comp.Pars", // title of window for temperature compensation parameters
@@ -613,7 +611,7 @@ extern "C" {
 	"K1",				// short label (max 5 chars) for 1st calibration point, coefficient K value 1
 	"T2",				// short label (max 5 chars) for 2nd calibration point, temperature value 2
 	"K2",				// short label (max 5 chars) for 2nd calibration point, coefficient K value 2
-	"alfa",				// short label (max 5 chars) for alfa factor used in formula R=R0*(1+alfa*(t-20°C))
+	"alfa",				// short label (max 5 chars) for alfa factor used in formula R=R0*(1+alfa*(t-20ï¿½C))
 	"Temperature value",				// title of window where temperature calibration points are input
 	"Coeff. K value",				// title of window where coefficients K calibration points are input
 	"Alfa value",				// title of window where alfa is input
@@ -624,7 +622,8 @@ extern "C" {
 	"STOP",	// grinding NOT running
 	"Press STOP to halt",	// grinding running help
 	"Press START to begin",	// grinding NOT running help
-
+	"Reset num pieces?" // reset num of pieces made?
+	"wire speed error",	// errore nella velocitÃ  della ruota di contrasto: filo aggrovigliato?
 };
 
 
@@ -652,7 +651,3 @@ extern "C" {
 };
 
 #endif //#ifndef def_LingueDefault_h_included
-
-#ifdef defLocalMain_EsportaLingue
-}
-#endif

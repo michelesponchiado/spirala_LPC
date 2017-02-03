@@ -49,6 +49,7 @@ unsigned char ucInsertCodeInJobList(unsigned char *pucCodice,unsigned char ucMan
 // cancellazione di un codice dalla joblist, dato l'indice
 unsigned char ucDeleteCodeInJobList_Idx(unsigned char ucIdxElem2delete);
 unsigned char ucDeleteCodeInJobList(unsigned char *pucCodice);
+unsigned char ucPurgeManualCodesEmptyFromJobList(void);
 // effettua il purge della coda dei job
 unsigned char ucPurgeJobList(void);
 // inizializzazione della lista codici
@@ -239,6 +240,8 @@ unsigned char ucHW_listaCodici(void){
 			vSetStatusCurrentWindow(enumWindowStatus_Active);
 			return 2;
 		case enumWindowStatus_Initialize:
+			// purge all the manual empty jobs
+			ucPurgeManualCodesEmptyFromJobList();
 			ucEnableStartLavorazione(1);
 			for (i=0;i<enumCODELIST_NumOfButtons;i++)
 				ucCreateTheButton(i); 

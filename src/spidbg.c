@@ -48,6 +48,7 @@ extern xdata float fArrayConvAD7327_Volts[8];
 xdata unsigned char ucBloccaVisualizzazioneMisuraStatica;
 xdata unsigned char ucHoldMisuraStatica;
 xdata unsigned char ucMarkMemorizeSetup;
+unsigned char ucResetPiecesDone;
 xdata unsigned char ucCountLoopBeforeSaveSetup;
 extern unsigned char uc_use_hexadecimal_letters;
 
@@ -284,18 +285,60 @@ unsigned char ucHW_setupProduzione(void){
 					vSetStatusCurrentWindow(enumWindowStatus_Initialize);
 					return 2;
 				case enumPROD_mem:
+				{
+					if (!PrgRunning)
+					{
+						break;
+					}
 					// l'utente ha risposto s�, memorizza???
-					if (uiGetWindowParam(enumWinId_YesNo,defWinParam_YESNO_Answer)){
-						if (!PrgRunning)
-							break;
+					if (uiGetWindowParam(enumWinId_YesNo,defWinParam_YESNO_Answer))
+					{
+						// se ho un codice prodotto nuovo, da memorizzare, e sono stati prodotti dei pezzi...
+						// devo chiedere ad utente se i pezzi prodotti vanno azzerati oppure se li devo conservare
+						if (pPro->empty && actNumPezzi > spiralatrice.oldndo)
+						{
+							defSetWinParam(defWinParam_PROD_NumCampo,1001);
+	                        ucLcdRefreshTimeoutEnable(0);
+	                        // chiedo conferma azzeramento numero di pezzi prodotti
+	                        //strcpy(hw.ucStringNumKeypad_in,"Azzero pezzi prodotti?");
+	                        vStringLangCopy(hw.ucStringNumKeypad_in,enumStr20_reset_pieces_done);
+	                        unsigned int ntot = nvram_struct.commesse[spiralatrice.runningCommessa].n+nvram_struct.commesse[spiralatrice.runningCommessa].magg;
+                            snprintf(hw.ucStringNumKeypad_out, sizeof(hw.ucStringNumKeypad_out),"%s %u/%u", pucStringLang(enumStr20_Numero_pezzi_prodotti), actNumPezzi, ntot);
+	                        // impostazione del parametro 0 al valore 0--> visualizza pulsanti yes e no
+	                        ucSetWindowParam(enumWinId_YesNo,def_WinYesNo_Param_TipoPulsante, def_WinYesNo_PUlsantiYesNo);
+	                        // visualizzo yes/no...
+	                        ucCallWindow(enumWinId_YesNo);
+	                        break;
+						}
+						ucResetPiecesDone = 1;
 						ucMarkMemorizeSetup=1;
 						// abilito il refresh automatico del display!
 						ucLcdRefreshTimeoutEnable(200);
 					}
 					break;
+				}
 				// correzione alfa factor
 				case 1000:
+				{
 					break;
+				}
+				// ritorno da richiesta di azzeramento pezzi
+				case 1001:
+				{
+					if (!PrgRunning)
+					{
+						break;
+					}
+					ucResetPiecesDone = 0;
+					if (uiGetWindowParam(enumWinId_YesNo,defWinParam_YESNO_Answer))
+					{
+						ucResetPiecesDone = 1;
+					}
+					ucMarkMemorizeSetup=1;
+					// abilito il refresh automatico del display!
+					ucLcdRefreshTimeoutEnable(200);
+					break;
+				}
 
 			}
 
@@ -322,6 +365,7 @@ unsigned char ucHW_setupProduzione(void){
 
 
 			ucMarkMemorizeSetup=0;
+			ucResetPiecesDone = 1;
 			ucCountLoopBeforeSaveSetup=0;
 			vRefreshActiveProductCode();
 			vSetStatusCurrentWindow(enumWindowStatus_Active);
@@ -699,8 +743,7 @@ unsigned char ucHW_setupProduzione(void){
                                 // chiedo conferma
                                 //strcpy(hw.ucStringNumKeypad_in,"Memorizzo setup?");
                                 vStringLangCopy(hw.ucStringNumKeypad_in,enumStr20_StoreSetup);
-                                hw.ucStringNumKeypad_out[0]=0;
-                                // impostazione del parametro 0 al valore 0--> visualizza pulsanti yes e no
+                                hw.ucStringNumKeypad_out[0] = 0;
                                 ucSetWindowParam(enumWinId_YesNo,def_WinYesNo_Param_TipoPulsante, def_WinYesNo_PUlsantiYesNo);
                                 // visualizzo yes/no...
                                 ucCallWindow(enumWinId_YesNo);
@@ -1008,8 +1051,8 @@ unsigned char ucHW_setupProduzione(void){
 					}
 					AdjustVelPeriferica(0);
 					// Se il programma necessitava di memorizzazione, adesso
-					//	viene azzerato il contapezzi.
-					if (pPro->empty){
+					//	viene azzerato il contapezzi, a meno che l'utente non abbia detto di NON azzerare i pezzi prodotti
+					if (pPro->empty && ucResetPiecesDone){
 						spiralatrice.NumPezziScarto=actNumPezzi;
 						// Se la commessa era gia' stata lavorata
 						// con un altro programma, ritorno al numero di

@@ -224,19 +224,19 @@ unsigned char ucHW_MainMenu(void){
 unsigned char ucHW_YesNo(void){
 
 
-	#define defYESNO_button_Title_0_row 32
+	#define defYESNO_button_Title_0_row 24
 	#define defYESNO_button_Title_0_col 0
 
-	#define defYESNO_button_Title_1_row (defYESNO_button_Title_0_row+24)
+	#define defYESNO_button_Title_1_row (defYESNO_button_Title_0_row+28)
 	#define defYESNO_button_Title_1_col 0
 
-	#define defYESNO_button_Title_2_row (defYESNO_button_Title_0_row+24*2)
+	#define defYESNO_button_Title_2_row (defYESNO_button_Title_0_row+28*2)
 	#define defYESNO_button_Title_2_col 0
 
-	#define defYESNO_button_Title_3_row (defYESNO_button_Title_0_row+24*3)
+	#define defYESNO_button_Title_3_row (defYESNO_button_Title_0_row+28*3)
 	#define defYESNO_button_Title_3_col 0
 
-	#define defYESNO_button_Answer_YES_row (defYESNO_button_Title_0_row+24*4)
+	#define defYESNO_button_Answer_YES_row (defYESNO_button_Title_0_row+28*4)
 	#define defYESNO_button_Answer_YES_col (32+164)
 
 	#define defYESNO_button_Answer_NO_row defYESNO_button_Answer_YES_row
@@ -493,137 +493,163 @@ unsigned char ucHandlePopupWindow(void){
 	ui_visualizza_misura_statica=0;
 	fResistenza_Visualizzata = 0;
 	// se c'� un allarme, lo visualizzo...
-	if ((alr_status==alr_status_alr)||hM.ucAlarmStatus){
-		for (i=0;i<16;i++){
-			if (alarms&(1L<<i)){
-				if (!hM.ucAlarmStatus){
-					ucCreateTheButton(enumButtonAlarmTitle);
-					ucCreateTheButton(enumButtonAlarmDesc);
-					ucCreateTheButton(enumButtonAlarmOk);
-					ucCreateTheButton(enumButtonAlarmDesc_2);
-					spiralatrice.oldalarms=alarms;
-					hM.ucAlarmStatus=i+1;
-				}
-				else if (ucHasBeenPressedButton(enumButtonAlarmOk)){
-					extern unsigned int ui_clear_i2c_alarm_subcode(void);
-					ui_clear_i2c_alarm_subcode();
-					alarms = 0;
-					/* Indico che l' allarme deve essere rivalutato. */
-					alr_status=alr_status_noalr;
-					/* Spengo la lampada gialla. */
-					outDigVariable &= ~ODG_LAMPADA;
-					/* La lampada � spenta. */
-					LampStatus=LampSpenta;
-					/* Spengo la lampada rossa. */
-					outDigVariable &= ~ODG_LAMPADA_RED;
-
-					hM.ucAlarmStatus=0;
-					vForceLcdRefresh();
-				}
-				//strcpy(hM.ucTitle_alarm,"      Allarme!      ");
-				vStringLangCopy(hM.ucDesc_alarm2,enumStr20_TitoloAllarmi);	
-				vStrcpy_trimBlank(hM.ucTitle_alarm,hM.ucDesc_alarm2,sizeof(hM.ucTitle_alarm)-2);
-				if (strlen(hM.ucTitle_alarm)<=10)
-					ucPrintTitleButton(hM.ucTitle_alarm,defMeasure_title_alarm_row,defMeasure_title_alarm_col,enumFontBig,enumButtonAlarmTitle,defLCD_Color_Yellow,9);
-				else
-					ucPrintTitleButton(hM.ucTitle_alarm,defMeasure_title_alarm_row,defMeasure_title_alarm_col,enumFontBig,enumButtonAlarmTitle,defLCD_Color_Yellow,9);
-				//strcpy(hM.ucDesc_alarm,ucTabellaMsgAllarmi[i]);
-				vStringLangCopy(hM.ucDesc_alarm,enumStr20_Allarmi+i);
-				ucPrintTitleButton(hM.ucDesc_alarm,defMeasure_desc_alarm_row,defMeasure_desc_alarm_col,enumFontMedium,enumButtonAlarmDesc,defLCD_Color_Trasparente,9);
-
-				hM.ucDesc_alarm2[0]=0;
-				hM.ucDesc_alarm3[0]=0;
-				hM.ucDesc_alarm4[0]=0;
-
-				switch(1L<<i){
-					case ALR_TEMPERATURE: 
-						{
-							// add diagnostic info to temperature alarm
-							extern unsigned int ui_temperature_alarm_subcode;
-							if (ui_temperature_alarm_subcode){
-								vStringLangCopy(hM.ucDesc_alarm2,ui_temperature_alarm_subcode);
-							}
-							break;
-						}
-					case ALR_TOLMIS:
-						if (macParms.modo == MODE_LENR){
-							vStringLangCopy(hM.ucDesc_alarm2,enumStr20_SetpointValue);
-							vStringLangCopy(hM.ucDesc_alarm3,enumStr20_MeasuredValue);
- 							if (sLCD.ulInfoAlarms[0]>sLCD.ulInfoAlarms[1])
-                            {
-                                float f1,f2;
-                                f1=((float)(sLCD.ulInfoAlarms[0]))/(TARGET_URP * MAGN_LEN * impToMm / 1000. /targetRes );
-                                f2=((float)(sLCD.ulInfoAlarms[3]))/(TARGET_URP * MAGN_LEN * impToMm / 1000. /targetRes );
-                                if (nvram_struct.actUM==UM_IN)
-                                {
-                                    f1*=feet2metri;
-                                    f2*=feet2metri;
-                                }
-								//strcpy(hM.ucDesc_alarm2,"MISURA>Massimo");
-								sprintf(hM.ucDesc_alarm4,"%s > %s",hM.ucDesc_alarm3,hM.ucDesc_alarm2);
-								// vStringLangCopy(hM.ucDesc_alarm2,enumStr20_MeasuredTooBig);	
-								sprintf(hM.ucDesc_alarm2,"%5.2f > %5.2f",f1,f2);
-								sprintf(hM.ucDesc_alarm3,"    +%i%%",(int)(((sLCD.ulInfoAlarms[0]-sLCD.ulInfoAlarms[3])*100L)/sLCD.ulInfoAlarms[3]));
-							}
-							else
-                            {
-                                float f1,f2;
-								f1=((float)(sLCD.ulInfoAlarms[0]))/(TARGET_URP * MAGN_LEN * impToMm / 1000. /targetRes );
-								f2=((float)(sLCD.ulInfoAlarms[3]))/(TARGET_URP * MAGN_LEN * impToMm / 1000. /targetRes );
-                                if (nvram_struct.actUM==UM_IN)
-                                {
-                                    f1*=feet2metri;
-                                    f2*=feet2metri;
-                                }
-								//strcpy(hM.ucDesc_alarm2,"misura<Minimo");
-								//vStringLangCopy(hM.ucDesc_alarm2,enumStr20_MeasuredTooLittle);
-								sprintf(hM.ucDesc_alarm4,"%s < %s",hM.ucDesc_alarm3,hM.ucDesc_alarm2);
-								sprintf(hM.ucDesc_alarm2,"%5.2f < %5.2f",f1,f2);
-								sprintf(hM.ucDesc_alarm3,"    -%i%%",(int)(((sLCD.ulInfoAlarms[3]-sLCD.ulInfoAlarms[0])*100L)/sLCD.ulInfoAlarms[3]));
-							}
-						}
-						else{
-							sprintf(hM.ucDesc_alarm2,"%s %li imp",pucStringLang(enumStr20_Contati),sLCD.ulInfoAlarms[0]);
-							sprintf(hM.ucDesc_alarm3,"%s %li imp",pucStringLang(enumStr20_Attesi),sLCD.ulInfoAlarms[1]);
-						}
-
-						break;
-					case ALR_NOTMIS:
-						sprintf(hM.ucDesc_alarm2,"%s %li imp",pucStringLang(enumStr20_Contati),sLCD.ulInfoAlarms[0]);
-						sprintf(hM.ucDesc_alarm3,"%s %li imp",pucStringLang(enumStr20_Massimo),sLCD.ulInfoAlarms[1]);
-						break;
-					case ALR_I2C_BUS:
-						{
-							extern unsigned int ui_get_i2c_alarm_subcode(void);
-							sprintf(hM.ucDesc_alarm2,"subcode: %i",ui_get_i2c_alarm_subcode());
-							break;
-						}
-
-				}
-				if (hM.ucDesc_alarm4[0]){
-					if (strlen(hM.ucDesc_alarm4)>20)
-						fontType=enumFontSmall;
-					else
-						fontType=enumFontMedium;
-					ucPrintTitleButton(hM.ucDesc_alarm4,defMeasure_desc_4_alarm_row,defMeasure_desc_4_alarm_col,fontType,enumButtonAlarmDesc_4,defLCD_Color_Trasparente,9);
-				}
-				if (hM.ucDesc_alarm2[0])
-					ucPrintTitleButton(hM.ucDesc_alarm2,defMeasure_desc_2_alarm_row,defMeasure_desc_2_alarm_col,enumFontMedium,enumButtonAlarmDesc_2,defLCD_Color_Trasparente,9);
-
-				if (hM.ucDesc_alarm3[0])
-					ucPrintTitleButton(hM.ucDesc_alarm3,defMeasure_desc_3_alarm_row,defMeasure_desc_3_alarm_col,enumFontMedium,enumButtonAlarmDesc_3,defLCD_Color_Trasparente,9);
-				//strcpy(hM.ucTitle,"Esc");
-				// faccio apparire la stringa "reset alarm" centrata
-				vStringLangCopy(hM.ucTitle,enumStr20_ResetAlarm);
-				// NON PI� DI 10 CARATTERI, DATO CHE � IN FONT BIG...
-				hM.ucTitle[10]=0;
-				vStrUpperCase(hM.ucTitle);
-				colonna=((defLcdWidthX_pixel-32*strlen(hM.ucTitle))/2);
-				ucPrintStaticButton(hM.ucTitle,defMeasure_ok_alarm_row,colonna,enumFontBig,enumButtonAlarmOk,defLCD_Color_Yellow);
-				
-				// RomStringAt(STR_ALR_FRENI1+i,2,0);
+	if ((alr_status==alr_status_alr)||hM.ucAlarmStatus)
+	{
+		uint32_t check_alarm = alarms;
+		unsigned char exit_loop = 0;
+		for (i = 0;i < 32 && !exit_loop;i++)
+		{
+			if (!check_alarm)
+			{
 				break;
 			}
+			if (! (check_alarm & 1))
+			{
+				check_alarm >>= 1;
+				continue;
+			}
+			exit_loop = 1;
+
+			if (!hM.ucAlarmStatus){
+				ucCreateTheButton(enumButtonAlarmTitle);
+				ucCreateTheButton(enumButtonAlarmDesc);
+				ucCreateTheButton(enumButtonAlarmOk);
+				ucCreateTheButton(enumButtonAlarmDesc_2);
+				spiralatrice.oldalarms=alarms;
+				hM.ucAlarmStatus=i+1;
+			}
+			else if (ucHasBeenPressedButton(enumButtonAlarmOk)){
+				extern unsigned int ui_clear_i2c_alarm_subcode(void);
+				ui_clear_i2c_alarm_subcode();
+				alarms = 0;
+				/* Indico che l' allarme deve essere rivalutato. */
+				alr_status=alr_status_noalr;
+				/* Spengo la lampada gialla. */
+				outDigVariable &= ~ODG_LAMPADA;
+				/* La lampada � spenta. */
+				LampStatus=LampSpenta;
+				/* Spengo la lampada rossa. */
+				outDigVariable &= ~ODG_LAMPADA_RED;
+
+				hM.ucAlarmStatus=0;
+				vForceLcdRefresh();
+			}
+			//strcpy(hM.ucTitle_alarm,"      Allarme!      ");
+			vStringLangCopy(hM.ucDesc_alarm2,enumStr20_TitoloAllarmi);
+			vStrcpy_trimBlank(hM.ucTitle_alarm,hM.ucDesc_alarm2,sizeof(hM.ucTitle_alarm)-2);
+			if (strlen(hM.ucTitle_alarm)<=10)
+				ucPrintTitleButton(hM.ucTitle_alarm,defMeasure_title_alarm_row,defMeasure_title_alarm_col,enumFontBig,enumButtonAlarmTitle,defLCD_Color_Yellow,9);
+			else
+				ucPrintTitleButton(hM.ucTitle_alarm,defMeasure_title_alarm_row,defMeasure_title_alarm_col,enumFontBig,enumButtonAlarmTitle,defLCD_Color_Yellow,9);
+			//strcpy(hM.ucDesc_alarm,ucTabellaMsgAllarmi[i]);
+			if (i < 16)
+			{
+				vStringLangCopy(hM.ucDesc_alarm,enumStr20_Allarmi+i);
+			}
+			else
+			{
+				// il check della velocità dice che forse il filo è aggrovigliato
+				if (i == 16)
+				{
+					vStringLangCopy(hM.ucDesc_alarm,enumStr20_Filo_Aggrovigliato);
+				}
+			}
+			ucPrintTitleButton(hM.ucDesc_alarm,defMeasure_desc_alarm_row,defMeasure_desc_alarm_col,enumFontMedium,enumButtonAlarmDesc,defLCD_Color_Trasparente,9);
+
+			hM.ucDesc_alarm2[0]=0;
+			hM.ucDesc_alarm3[0]=0;
+			hM.ucDesc_alarm4[0]=0;
+
+			switch(1L<<i){
+				case ALR_TEMPERATURE:
+					{
+						// add diagnostic info to temperature alarm
+						extern unsigned int ui_temperature_alarm_subcode;
+						if (ui_temperature_alarm_subcode){
+							vStringLangCopy(hM.ucDesc_alarm2,ui_temperature_alarm_subcode);
+						}
+						break;
+					}
+				case ALR_TOLMIS:
+					if (macParms.modo == MODE_LENR){
+						vStringLangCopy(hM.ucDesc_alarm2,enumStr20_SetpointValue);
+						vStringLangCopy(hM.ucDesc_alarm3,enumStr20_MeasuredValue);
+						if (sLCD.ulInfoAlarms[0]>sLCD.ulInfoAlarms[1])
+						{
+							float f1,f2;
+							f1=((float)(sLCD.ulInfoAlarms[0]))/(TARGET_URP * MAGN_LEN * impToMm / 1000. /targetRes );
+							f2=((float)(sLCD.ulInfoAlarms[3]))/(TARGET_URP * MAGN_LEN * impToMm / 1000. /targetRes );
+							if (nvram_struct.actUM==UM_IN)
+							{
+								f1*=feet2metri;
+								f2*=feet2metri;
+							}
+							//strcpy(hM.ucDesc_alarm2,"MISURA>Massimo");
+							sprintf(hM.ucDesc_alarm4,"%s > %s",hM.ucDesc_alarm3,hM.ucDesc_alarm2);
+							// vStringLangCopy(hM.ucDesc_alarm2,enumStr20_MeasuredTooBig);
+							sprintf(hM.ucDesc_alarm2,"%5.2f > %5.2f",f1,f2);
+							sprintf(hM.ucDesc_alarm3,"    +%i%%",(int)(((sLCD.ulInfoAlarms[0]-sLCD.ulInfoAlarms[3])*100L)/sLCD.ulInfoAlarms[3]));
+						}
+						else
+						{
+							float f1,f2;
+							f1=((float)(sLCD.ulInfoAlarms[0]))/(TARGET_URP * MAGN_LEN * impToMm / 1000. /targetRes );
+							f2=((float)(sLCD.ulInfoAlarms[3]))/(TARGET_URP * MAGN_LEN * impToMm / 1000. /targetRes );
+							if (nvram_struct.actUM==UM_IN)
+							{
+								f1*=feet2metri;
+								f2*=feet2metri;
+							}
+							//strcpy(hM.ucDesc_alarm2,"misura<Minimo");
+							//vStringLangCopy(hM.ucDesc_alarm2,enumStr20_MeasuredTooLittle);
+							sprintf(hM.ucDesc_alarm4,"%s < %s",hM.ucDesc_alarm3,hM.ucDesc_alarm2);
+							sprintf(hM.ucDesc_alarm2,"%5.2f < %5.2f",f1,f2);
+							sprintf(hM.ucDesc_alarm3,"    -%i%%",(int)(((sLCD.ulInfoAlarms[3]-sLCD.ulInfoAlarms[0])*100L)/sLCD.ulInfoAlarms[3]));
+						}
+					}
+					else{
+						sprintf(hM.ucDesc_alarm2,"%s %li imp",pucStringLang(enumStr20_Contati),sLCD.ulInfoAlarms[0]);
+						sprintf(hM.ucDesc_alarm3,"%s %li imp",pucStringLang(enumStr20_Attesi),sLCD.ulInfoAlarms[1]);
+					}
+
+					break;
+				case ALR_NOTMIS:
+					sprintf(hM.ucDesc_alarm2,"%s %li imp",pucStringLang(enumStr20_Contati),sLCD.ulInfoAlarms[0]);
+					sprintf(hM.ucDesc_alarm3,"%s %li imp",pucStringLang(enumStr20_Massimo),sLCD.ulInfoAlarms[1]);
+					break;
+				case ALR_I2C_BUS:
+					{
+						extern unsigned int ui_get_i2c_alarm_subcode(void);
+						sprintf(hM.ucDesc_alarm2,"subcode: %i",ui_get_i2c_alarm_subcode());
+						break;
+					}
+				case ALR_WIRE_TANGLED:
+					{
+						sprintf(hM.ucDesc_alarm2,"%s", pucStringLang(enumStr20_alarm_wire_tangled_speed));
+						break;
+					}
+
+			}
+			if (hM.ucDesc_alarm4[0]){
+				if (strlen(hM.ucDesc_alarm4)>20)
+					fontType=enumFontSmall;
+				else
+					fontType=enumFontMedium;
+				ucPrintTitleButton(hM.ucDesc_alarm4,defMeasure_desc_4_alarm_row,defMeasure_desc_4_alarm_col,fontType,enumButtonAlarmDesc_4,defLCD_Color_Trasparente,9);
+			}
+			if (hM.ucDesc_alarm2[0])
+				ucPrintTitleButton(hM.ucDesc_alarm2,defMeasure_desc_2_alarm_row,defMeasure_desc_2_alarm_col,enumFontMedium,enumButtonAlarmDesc_2,defLCD_Color_Trasparente,9);
+
+			if (hM.ucDesc_alarm3[0])
+				ucPrintTitleButton(hM.ucDesc_alarm3,defMeasure_desc_3_alarm_row,defMeasure_desc_3_alarm_col,enumFontMedium,enumButtonAlarmDesc_3,defLCD_Color_Trasparente,9);
+			//strcpy(hM.ucTitle,"Esc");
+			// faccio apparire la stringa "reset alarm" centrata
+			vStringLangCopy(hM.ucTitle,enumStr20_ResetAlarm);
+			// NON PI� DI 10 CARATTERI, DATO CHE � IN FONT BIG...
+			hM.ucTitle[10]=0;
+			vStrUpperCase(hM.ucTitle);
+			colonna=((defLcdWidthX_pixel-32*strlen(hM.ucTitle))/2);
+			ucPrintStaticButton(hM.ucTitle,defMeasure_ok_alarm_row,colonna,enumFontBig,enumButtonAlarmOk,defLCD_Color_Yellow);
 		}
 		return 1;
 	}

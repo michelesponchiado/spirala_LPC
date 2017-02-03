@@ -112,7 +112,11 @@ For more information about the syntax of the linker scripts and how to modify th
 // MAX 2 CARATTERI
 // MAX 2 CARATTERI
 //
-#define defMajorNumFirmware_Scheda " 3"
+#ifdef defSimulaEncoder
+	#define defMajorNumFirmware_Scheda " X"
+#else
+	#define defMajorNumFirmware_Scheda " 3"
+#endif
 
 //
 //
@@ -125,7 +129,11 @@ For more information about the syntax of the linker scripts and how to modify th
 // MAX 2 CARATTERI
 //
 //
-#define defMinorNumFirmware_Scheda "36"
+#ifdef defSimulaEncoder
+	#define defMinorNumFirmware_Scheda "XX"
+#else
+	#define defMinorNumFirmware_Scheda "36"
+#endif
 
 // version history
 //

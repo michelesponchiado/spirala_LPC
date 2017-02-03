@@ -1,6 +1,7 @@
 #ifndef def_az4186_spiralatrice_h_included
 #define def_az4186_spiralatrice_h_included
 
+#include <stdint.h>
 #include "az4186_const.h"
 
 
@@ -39,6 +40,29 @@ typedef struct _type_stop_spindle
 	unsigned long ul_prev_timer_interrupt_count;
 	unsigned char ucDacOutValues[8];
 }type_stop_spindle;
+
+typedef enum
+{
+	enum_status_check_tangled_wire_idle = 0,
+	enum_status_check_tangled_wire_check,
+	enum_status_check_tangled_wire_validate,
+	enum_status_check_tangled_wire_alarm,
+	enum_status_check_tangled_wire_numof
+}enum_status_check_tangled_wire;
+
+#define def_min_check_tangled_wire_duration_ms 1000
+#define def_period_check_tangled_wire_ms 100
+
+typedef struct _type_check_tangled_wire
+{
+	enum_status_check_tangled_wire status;
+	unsigned char speed_percentage; // a percentage of 0 means check disabled
+	unsigned int min_duration_ms;
+	unsigned int cur_duration_ms;
+	float inv_vel_prod_vera;
+	float vel_prod_vera;
+	unsigned long ul_prev_timer_interrupt_count;
+}type_check_tangled_wire;
 
 typedef struct _TipoStruct_Spiralatrice{
 	/* Numero del programma col primo codice. */
@@ -109,7 +133,7 @@ typedef struct _TipoStruct_Spiralatrice{
 	unsigned char AbilitaModificaPotenziometri;
 
 	/* Backup valore degli allarmi. */
-	unsigned char oldalarms;
+	uint32_t oldalarms;
 	/* Timer della durata dell' allarme. */
 	unsigned long TempoAllarme;
 	unsigned char nextRunPrg;
@@ -152,6 +176,7 @@ typedef struct _TipoStruct_Spiralatrice{
 	float f_raggio_coltello_meno_interasse;
 
 	type_stop_spindle stop_spindle;
+	type_check_tangled_wire check_tangled_wire;
 
 }TipoStruct_Spiralatrice;
 

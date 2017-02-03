@@ -8,6 +8,10 @@
 
 #include "az4186_temperature_compensation.h"
 
+
+// per simulare l'encoder...
+#define defSimulaEncoder
+
 /* Definizione del tipo di memoria in cui devono essere allocate le variabili
    cui si dovrebbe accedere rapidamente. Se si usa un 8052, o comunque un
    micro che ha spazio per lo stack, allora ho memoria di tipo data a
@@ -185,7 +189,7 @@ extern unsigned short* pADCSta;
 
 
 
-extern unsigned short alarms;
+extern uint32_t alarms;
 extern xdat unsigned char alr_status;
 
 #ifndef _CC51
@@ -595,7 +599,7 @@ extern xdat unsigned char actSpezzoneTest;
 extern xdat unsigned char actPezzoTest;
 
 /* Backup valore degli allarmi. */
-extern xdat unsigned char oldalarms;
+extern xdat uint32_t oldalarms;
 /* Timer della durata dell' allarme. */
 extern xdat unsigned long TempoAllarme;
 extern xdat unsigned char nextRunCommessa;

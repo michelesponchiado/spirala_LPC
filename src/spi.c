@@ -1318,7 +1318,7 @@ static void update_spindle_stop(void)
 			unsigned long now = get_ul_timer_interrupt_count();
 			if (now >= p->ul_prev_timer_interrupt_count)
 			{
-				elapsed_ms = now - p->ul_prev_timer_interrupt_count;
+				elapsed_ms = (now - p->ul_prev_timer_interrupt_count) * PeriodoIntMs;
 			}
 			if (elapsed_ms >= def_period_update_stop_ramp_ms)
 			{
@@ -1386,6 +1386,100 @@ static void update_spindle_stop(void)
 			SendByteMax519(addrDacFrizione1, 0, 0);
 			// Spengo il motore.
 			outDigVariable &= ~ODG_MOTORE;
+			break;
+		}
+	}
+}
+
+static void check_tangled_wire(void)
+{
+	type_check_tangled_wire * p = &spiralatrice.check_tangled_wire;
+	if (!PrgRunning)
+	{
+		p->status = enum_status_check_tangled_wire_idle;
+	}
+	else switch(p->status)
+	{
+		case enum_status_check_tangled_wire_idle:
+		default:
+		{
+			// if program not running, or the program is empty, or check disabled (percentage is 0), or an alarm is present, better not to check
+			if (!PrgRunning || hprg.theRunning.empty || (p->speed_percentage == 0) || alarms)
+			{
+				break;
+			}
+			if (p->min_duration_ms < def_min_check_tangled_wire_duration_ms)
+			{
+				p->min_duration_ms = def_min_check_tangled_wire_duration_ms;
+			}
+			p->status = enum_status_check_tangled_wire_check;
+			p->vel_prod_vera = -1.0;
+			break;
+		}
+		case enum_status_check_tangled_wire_check:
+		case enum_status_check_tangled_wire_validate:
+		{
+			// if we are going very slow, maybe the wheels are not gripping so it is better not to check
+			if (velMMin < 0.1)
+			{
+				p->cur_duration_ms = 0;
+				break;
+			}
+			if (p->vel_prod_vera != hprg.theRunning.vel_prod_vera)
+			{
+				p->vel_prod_vera = hprg.theRunning.vel_prod_vera;
+				if (hprg.theRunning.vel_prod_vera > 1e-3)
+				{
+					p->inv_vel_prod_vera = 1.0 / hprg.theRunning.vel_prod_vera;
+				}
+				else
+				{
+					p->inv_vel_prod_vera = 1;
+				}
+			}
+			unsigned int elapsed_ms = def_period_check_tangled_wire_ms;
+			unsigned long now = get_ul_timer_interrupt_count();
+			if (now >= p->ul_prev_timer_interrupt_count)
+			{
+				elapsed_ms = (now - p->ul_prev_timer_interrupt_count) * PeriodoIntMs;
+			}
+			if (elapsed_ms >= def_period_check_tangled_wire_ms)
+			{
+				p->ul_prev_timer_interrupt_count = now;
+
+				unsigned int delta_speed_0_100 = 100 * fabs((velMMin - hprg.theRunning.vel_prod_vera) * p->inv_vel_prod_vera);
+				if (delta_speed_0_100 > p->speed_percentage)
+				{
+					if (p->status == enum_status_check_tangled_wire_check)
+					{
+						p->cur_duration_ms = 0;
+						p->status = enum_status_check_tangled_wire_validate;
+					}
+					else
+					{
+						p->cur_duration_ms += elapsed_ms;
+						if (p->cur_duration_ms >= p->min_duration_ms)
+						{
+							p->status = enum_status_check_tangled_wire_alarm;
+						}
+					}
+				}
+				else
+				{
+					if (p->status != enum_status_check_tangled_wire_check)
+					{
+						p->status = enum_status_check_tangled_wire_check;
+					}
+				}
+			}
+			break;
+		}
+		case enum_status_check_tangled_wire_alarm:
+		{
+			// emit alarm wire tangled
+			alarms    |= ALR_WIRE_TANGLED;
+			alr_status = alr_status_alr;
+			p->status = enum_status_check_tangled_wire_idle;
 			break;
 		}
 	}
@@ -1545,6 +1639,9 @@ void upd7Seg(void){
 
    }
    update_spindle_stop();
+
+   check_tangled_wire();
+
 	/* Ne approfitto anche per impartire un nuovo gradino alla
 		rampa dei DAC, se � il caso.
 	*/

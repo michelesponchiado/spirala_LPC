@@ -831,7 +831,8 @@ enum statiMisura {
 #define ALR_USB_DISK  0x1000
 #define ALR_SD_CARD   0x2000
 #define ALR_I2C_BUS   0x4000
-#define ALR_TEMPERATURE      0x8000
+#define ALR_TEMPERATURE      0x08000
+#define ALR_WIRE_TANGLED     0x10000
 
 /* Unit� di resistenza programma: rappresenta il valore normalizzato
    della resistenza da produrre. Inoltre nella routine
