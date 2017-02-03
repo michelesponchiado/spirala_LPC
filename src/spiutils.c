@@ -972,6 +972,10 @@ void inpToOut(void){
 			// spengo la lampada rossa
 			outDigVariable &= ~ODG_LAMPADA_RED;
 		}
+
+#ifdef def_enable_spindle_stop_ramp_down
+		request_spindle_stop();
+#else
 		/* Indico che nessuna rampa deve essere aggiornata. */
 		spiralatrice.StatusRampaDac=0;
 		spiralatrice.GradinoRampaDAC=NumGradiniRampaDAC;
@@ -988,6 +992,7 @@ void inpToOut(void){
 		SendByteMax519(addrDacFrizione1,0,0);
 		/* Spengo il motore. */
 		outDigVariable &= ~ODG_MOTORE;
+#endif
 
 	    /* Resetto per sicurezza l' indicatore di misura in corso. */
 		criticMis = 0;

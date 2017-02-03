@@ -1248,6 +1248,150 @@ void init(void){
     
 }
 
+void request_spindle_stop(void)
+{
+	type_stop_spindle * p = &spiralatrice.stop_spindle;
+	p->num_req++;
+}
+
+static void update_spindle_stop(void)
+{
+	type_stop_spindle * p = &spiralatrice.stop_spindle;
+	if (p->num_req != p->num_ack)
+	{
+	   p->num_ack = p->num_req;
+	   p->status = enum_stop_spindle_status_init;
+	}
+	switch(spiralatrice.stop_spindle.status)
+	{
+		case enum_stop_spindle_status_idle:
+		default:
+		{
+			break;
+		}
+		case enum_stop_spindle_status_init:
+		{
+			p->status = enum_stop_spindle_status_slow_down;
+			unsigned int stop_ramp_max_length_ms = p->stop_ramp_max_length_ms;
+			if ((stop_ramp_max_length_ms < def_min_stop_ramp_max_length_ms) || (stop_ramp_max_length_ms > def_max_stop_ramp_max_length_ms))
+			{
+				stop_ramp_max_length_ms = default_stop_ramp_max_length_ms;
+			}
+			unsigned int max_periods_to_stop = stop_ramp_max_length_ms / def_period_update_stop_ramp_ms;
+			if (!max_periods_to_stop)
+			{
+				max_periods_to_stop = 1;
+			}
+			unsigned int spindle_dac_start_value = spiralatrice.DacOut[0];
+			unsigned int n_periods_to_stop = (max_periods_to_stop * spindle_dac_start_value) >> def_num_bit_shift_FS_DAC_MAX519;
+			if (!n_periods_to_stop)
+			{
+				n_periods_to_stop = 1;
+			}
+			p->final_num_periods             = n_periods_to_stop;
+			p->current_num_periods           = 0;
+			p->ul_prev_timer_interrupt_count = get_ul_timer_interrupt_count();
+			int decrease_step_per_period     = spindle_dac_start_value / n_periods_to_stop;
+			if (!decrease_step_per_period)
+			{
+			 decrease_step_per_period = 1;
+			}
+			p->num_step_decrease_per_period[0] = decrease_step_per_period;
+			{
+				unsigned int idxDAC;
+				for (idxDAC = 1; idxDAC <= 2; idxDAC++)
+				{
+					unsigned int dac_start_value = spiralatrice.DacOut[2 * idxDAC];
+					decrease_step_per_period = dac_start_value / n_periods_to_stop;
+					if (!decrease_step_per_period)
+					{
+						decrease_step_per_period = 1;
+					}
+					p->num_step_decrease_per_period[idxDAC] = decrease_step_per_period;
+				}
+			}
+		break;
+		}
+		case enum_stop_spindle_status_slow_down:
+		{
+			unsigned int elapsed_ms = def_period_update_stop_ramp_ms;
+			unsigned long now = get_ul_timer_interrupt_count();
+			if (now >= p->ul_prev_timer_interrupt_count)
+			{
+				elapsed_ms = now - p->ul_prev_timer_interrupt_count;
+			}
+			if (elapsed_ms >= def_period_update_stop_ramp_ms)
+			{
+				p->ul_prev_timer_interrupt_count = now;
+				// spindle DAC update
+				{
+					unsigned int spindle_dac_value = spiralatrice.DacOut[0];
+					if (spindle_dac_value >= p->num_step_decrease_per_period[0])
+					{
+						spindle_dac_value -= p->num_step_decrease_per_period[0];
+					}
+					else
+					{
+						spindle_dac_value = 0;
+					}
+					spiralatrice.DacOut[0] = spindle_dac_value;
+					p->ucDacOutValues[0] = spindle_dac_value;
+					// send the command to the DACs (ucDacOutValues[1] is the current driving to the spindle and it wont be changed here)
+					SendByteMax519(addrDacMandrino, p->ucDacOutValues[0], spiralatrice.DacOut[1]);
+				}
+				// wheels DAC update
+				{
+					unsigned int idxDAC;
+					for (idxDAC = 1; idxDAC <= 2; idxDAC++)
+					{
+						unsigned int dac_value = spiralatrice.DacOut[2 * idxDAC];
+						unsigned int decrease_step =  p->num_step_decrease_per_period[idxDAC];
+						if (dac_value >= decrease_step)
+						{
+							dac_value -= decrease_step;
+						}
+						else
+						{
+							dac_value = 0;
+						}
+						spiralatrice.DacOut[2 * idxDAC] = dac_value;
+						p->ucDacOutValues[2 * idxDAC] = dac_value;
+					}
+					// send the command to the wheels
+					SendByteMax519(addrDacFrizione1, p->ucDacOutValues[2], p->ucDacOutValues[4]);
+				}
+				if (++p->current_num_periods >= p->final_num_periods)
+				{
+					p->status = enum_stop_spindle_status_ends;
+				}
+			}
+			break;
+		}
+		case enum_stop_spindle_status_ends:
+		{
+			p->status = enum_stop_spindle_status_idle;
+
+			/* Indico che nessuna rampa deve essere aggiornata. */
+			spiralatrice.StatusRampaDac=0;
+			spiralatrice.GradinoRampaDAC=NumGradiniRampaDAC;
+			// Se il motore e' acceso, lo spengo azzerando i DAC del mandrino e delle frizioni.
+			unsigned int i=0;
+			while (i < NumDacRampa * 2)
+			{
+				spiralatrice.DacOut[i]   = 0;
+				spiralatrice.DacOutOld[i]= 0;
+				i++;
+			}
+			SendByteMax519(addrDacMandrino, 0, 0);
+			SendByteMax519(addrDacFrizione1, 0, 0);
+			// Spengo il motore.
+			outDigVariable &= ~ODG_MOTORE;
+			break;
+		}
+	}
+}
+
+
 
 
 
@@ -1400,17 +1544,21 @@ void upd7Seg(void){
 
 
    }
+   update_spindle_stop();
 	/* Ne approfitto anche per impartire un nuovo gradino alla
 		rampa dei DAC, se � il caso.
 	*/
-	if (spiralatrice.TempoRefreshRampa*PeriodoIntMs>=RefreshRampa){
+	if (spiralatrice.TempoRefreshRampa*PeriodoIntMs>=RefreshRampa)
+	{
 		unsigned int ui_inc_step_rampa;
 		ui_inc_step_rampa=(spiralatrice.TempoRefreshRampa*PeriodoIntMs+RefreshRampa/2)/RefreshRampa;
-		// try to compensate for some delay in ramp generationn(due to the motherfucking display fpga)
-		if (ui_inc_step_rampa>3){
+		// try to compensate for some delay in ramp generation (due to the motherfucking display fpga)
+		if (ui_inc_step_rampa>3)
+		{
 			ui_inc_step_rampa=3;
 		}
-		else if (ui_inc_step_rampa<1){
+		else if (ui_inc_step_rampa<1)
+		{
 			ui_inc_step_rampa=1;
 		}
 		spiralatrice.TempoRefreshRampa=0;
@@ -1453,7 +1601,7 @@ void upd7Seg(void){
 				SendByteMax519(addrDacMandrino,ucDacOutValues[0],ucDacOutValues[1]);
 			}
 			// se richiesto, aggiorno rampa ruote di contrasto
-			// attenzione perch� ruota contrasto2 portata subito dopo rampa contrasto1
+			// attenzione perch� ruota contrasto2 portata subito dopo ruota contrasto1
 			if (spiralatrice.StatusRampaDac&((1<<1)|(1<<2))){
 				SendByteMax519(addrDacFrizione1,ucDacOutValues[2],ucDacOutValues[4]);
 			}

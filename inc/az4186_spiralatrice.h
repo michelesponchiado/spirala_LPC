@@ -11,6 +11,34 @@ typedef enum{noSlowRpmMan=0,
 			slowRpmManAll
 	    }TipoSlowRpmMan;
 
+typedef enum
+{
+	enum_stop_spindle_status_idle = 0,
+	enum_stop_spindle_status_init,
+	enum_stop_spindle_status_slow_down,
+	enum_stop_spindle_status_ends,
+	enum_stop_spindle_status_numof
+}enum_stop_spindle_status;
+
+#define def_min_stop_ramp_max_length_ms 300
+#define def_max_stop_ramp_max_length_ms 2000
+#define default_stop_ramp_max_length_ms 1000
+
+#define def_period_update_stop_ramp_ms 50
+#define def_enable_spindle_stop_ramp_down
+
+typedef struct _type_stop_spindle
+{
+	unsigned int num_req;
+	unsigned int num_ack;
+	enum_stop_spindle_status status;
+	unsigned int stop_ramp_max_length_ms; // the stop ramp length when the spindle DAC is full speed
+	int num_step_decrease_per_period[3];
+	unsigned int final_num_periods;
+	unsigned int current_num_periods;
+	unsigned long ul_prev_timer_interrupt_count;
+	unsigned char ucDacOutValues[8];
+}type_stop_spindle;
 
 typedef struct _TipoStruct_Spiralatrice{
 	/* Numero del programma col primo codice. */
@@ -50,7 +78,7 @@ typedef struct _TipoStruct_Spiralatrice{
 	TipoSlowRpmMan slowRpmMan;
 	/* Carattere che contiene i bit che identificano se un particolare
 	   Dac necessita di variazione a gradino delle proprie uscite.
-	   La maschera Š fornita dall' indirizzo di dac.
+	   La maschera ï¿½ fornita dall' indirizzo di dac.
 	   bit 0 --> mandrino
 	   bit 1 --> frizione 1
 	   bit 2 --> frizione 2
@@ -65,7 +93,7 @@ typedef struct _TipoStruct_Spiralatrice{
 	   debba essere eliminato. */
 	unsigned char PrimoPezzoEliminato;
 	unsigned char nextRunCommessa;
-	/* Char che indica se il valore della resistenza statica è valido o no. */
+	/* Char che indica se il valore della resistenza statica ï¿½ valido o no. */
 	unsigned char misStaOk;
 
 	unsigned long TempoRefreshRampa;
@@ -122,6 +150,8 @@ typedef struct _TipoStruct_Spiralatrice{
 	unsigned char StartPortata;
 	float f_pos_coltello_spaziatura_mm;
 	float f_raggio_coltello_meno_interasse;
+
+	type_stop_spindle stop_spindle;
 
 }TipoStruct_Spiralatrice;
 

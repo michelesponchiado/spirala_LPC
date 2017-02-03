@@ -257,9 +257,9 @@ PROVIDE( _start = 0x00000000);
     } >Ram64
     
     
-    ._AZ4186_NVRAM :        
+    ._AZ4186_NVRAM (NOLOAD):  
     {
-        *(AZ4186_NVRAM_SECTION);
+        *(AZ4186_NVRAM_SECTION) ;
     } >AZ4186_NVRAM
         
     

@@ -1160,6 +1160,7 @@ unsigned char ucDigitalInput_AtHiLevel(enumInputEdge ie);
 unsigned char ucDigitalInput_AtLowLevel(enumInputEdge ie);
 unsigned char ucDigitalInput_NegativeEdge(enumInputEdge ie);
 void vRefreshInputEdge(enumInputEdge ie,unsigned int uiNewValue);
+unsigned long get_ul_timer_interrupt_count(void);
 
 // routine che prepara nella stringa pDst
 // la descrizione formattata dell'evento di log produzione puntato da pRL
@@ -1200,6 +1201,9 @@ float f_convert_perc_dist_to_float_0_100(unsigned short int perc_dist);
 // macro che converte un float in ingresso, nell'intervallo 0.0 .. 100.0, in un numero compreso fra 
 // 0 e defMaxValuePercDistanzia
 unsigned short int us_convert_float_0_100_to_perc_dist(float f_0_100_value);
+
+// spindle the spindle to ramp down until it stops
+void request_spindle_stop(void);
 
 // struttura che permette di contenere i valori temporanei memorizzati nel menu 
 // (numero di spire, valore ohmico iniziale e finale)

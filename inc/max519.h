@@ -3,13 +3,16 @@
 
 /* Fondo scala del DAC MAXIM 519. */
 #define FS_DAC_MAX519  0xFF
+// num of shift to get full scale of MAX519
+// e.g. executing def_num_bit_shift_FS_DAC_MAX519 right shift you divide by FS_DAC_MAX519
+#define def_num_bit_shift_FS_DAC_MAX519  8
 
-/* Indirizzi dei Dac di controllo del mandrino, della velocit… e della
+/* Indirizzi dei Dac di controllo del mandrino, della velocitï¿½ e della
    coppia delle frizioni, delle posizioni del coltello. */
 
-// max519 numero 0 out0=velocità Mandrino  out1=coppia mandrino 
+// max519 numero 0 out0=velocitï¿½ Mandrino  out1=coppia mandrino 
 #define addrDacMandrino 	0
-// max519 numero 1 out0=velocità ruota 1  out1=velocità ruota 2 
+// max519 numero 1 out0=velocitï¿½ ruota 1  out1=velocitï¿½ ruota 2 
 #define addrDacFrizione1  	1
 // nel dac 1, frizione 1 esce dall'uscita 0
 #define addrOutInDacFrizione1 	0
@@ -42,7 +45,7 @@ extern unsigned char ucSendCommandPosTaglioMax519_Main(unsigned char out1);
 /* Routine che porta un Dac in power down mode.
    Ingresso: l' indirizzo del Dac da portare in power down mode.
    Uscita: nulla.
-   Quando un Dac Š in pwer down, i suoi latch conservano il valore
-   da portare in uscita, ma l' uscita Š flottante.
+   Quando un Dac ï¿½ in pwer down, i suoi latch conservano il valore
+   da portare in uscita, ma l' uscita ï¿½ flottante.
 */
 void PowerDownDac(unsigned char addrMax519);

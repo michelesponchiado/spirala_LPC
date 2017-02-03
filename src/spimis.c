@@ -1378,7 +1378,10 @@ void v_reset_cutter_position(void){
 data unsigned char uc_in_timer0_interrupt=0;
 xdata unsigned int ui_cnt_in_timer0_interrupt=0;
 
-
+unsigned long get_ul_timer_interrupt_count(void)
+{
+	return ul_counter_interrupt_timer0;
+}
 
 // routine di gestione del timer a tot ms
 //__attribute__ ((interrupt ("IRQ"))) void IRQ_Handler_timer0(void){
@@ -1392,6 +1395,8 @@ void IRQ_Handler_timer0(void){
 #warning *************
 #warning 
 */
+    ul_counter_interrupt_timer0++;
+
 	Outputs_Hi|=0x80;
     if (uc_in_timer0_interrupt){
 		ui_cnt_in_timer0_interrupt++;
@@ -1406,7 +1411,6 @@ void IRQ_Handler_timer0(void){
 
 // incremento di 1 il contatore di interrupt
 	ucCntInterrupt++;
-    ul_counter_interrupt_timer0++;
 
 	if (cntAvv == 100)
 		cntAvv = 0;
