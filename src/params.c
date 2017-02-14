@@ -570,6 +570,32 @@ PROGRAMMA auxPrg_params;
 
 static code unsigned char ucLivingSaveParamsChars[]={'-','\\','|','/'};
 
+void set_check_tangled_wire_params_default(void)
+{
+	type_check_wire_tangled_params * p = &macParms.check_wire_tangled_params;
+	p->enable = !!p->enable;
+	{
+		if (p->min_duration_ms < def_min_chkwt_duration_ms)
+		{
+			p->min_duration_ms = def_min_chkwt_duration_ms;
+		}
+		if (p->min_duration_ms > def_max_chkwt_duration_ms)
+		{
+			p->min_duration_ms = def_max_chkwt_duration_ms;
+		}
+	}
+	{
+		if (p->speed_percentage < def_min_chkwt_speed_perc)
+		{
+			p->speed_percentage = def_min_chkwt_speed_perc;
+		}
+		if (p->speed_percentage > def_max_chkwt_speed_perc)
+		{
+			p->speed_percentage = def_max_chkwt_speed_perc;
+		}
+	}
+}
+
 
 code TipoInfoFormatoParsMac formatoParMac[]={
 	{enumFP_date_and_time,1,"[Date]",NULL},
@@ -635,6 +661,11 @@ code TipoInfoFormatoParsMac formatoParMac[]={
 	{enumFP_float,	1,"spacerOffset",(unsigned char xdata *)&macParms.fOffsetDistanziatore_ColtelloMm},
 	{enumFP_unsigned_short,	1,"spacerDelay",(unsigned char xdata *)&macParms.usDelayDistanziaDownMs},
 	{enumFP_unsigned_char,1,"grinding",(unsigned char xdata *)&macParms.uc_enable_spindle_grinding},
+
+	// check wire tangled parameters
+	{enumFP_unsigned_char	,1,"ckwtEnable"		,(unsigned char *)&macParms.check_wire_tangled_params.enable          },
+	{enumFP_unsigned_int	,1,"ckwtSpeedPerc"	,(unsigned char *)&macParms.check_wire_tangled_params.speed_percentage},
+	{enumFP_unsigned_int	,1,"ckwtDuration"	,(unsigned char *)&macParms.check_wire_tangled_params.min_duration_ms },
 
 	{enumFP_label,	1,			"[End params]",NULL},
 

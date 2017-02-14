@@ -1393,6 +1393,8 @@ static void update_spindle_stop(void)
 
 static void check_tangled_wire(void)
 {
+#define def_min_speed_check_wire_tangle_mmin 0.1
+#define def_min_time_validate_after_lock_ms 2000
 	type_check_tangled_wire * p = &spiralatrice.check_tangled_wire;
 	if (!PrgRunning)
 	{
@@ -1403,39 +1405,59 @@ static void check_tangled_wire(void)
 		case enum_status_check_tangled_wire_idle:
 		default:
 		{
+			type_check_wire_tangled_params * p_params = &macParms.check_wire_tangled_params;
 			// if program not running, or the program is empty, or check disabled (percentage is 0), or an alarm is present, better not to check
-			if (!PrgRunning || hprg.theRunning.empty || (p->speed_percentage == 0) || alarms)
+			if (!PrgRunning || hprg.theRunning.empty || (!p_params->enable) || alarms)
 			{
 				break;
 			}
-			if (p->min_duration_ms < def_min_check_tangled_wire_duration_ms)
+			// copy back the setup values, they are already validated
+			p->min_duration_ms 	= p_params->min_duration_ms;
+			p->speed_percentage = p_params->speed_percentage;
+			p->status = enum_status_check_tangled_wire_wait_lock;
+			p->vel_prod_to_check = -1.0;
+			unsigned long now = get_ul_timer_interrupt_count();
+			p->ul_prev_timer_interrupt_count = now;
+			break;
+		}
+		case enum_status_check_tangled_wire_wait_lock:
+		{
+			float fv = velMMin;
+			if ( (fv < def_min_speed_check_wire_tangle_mmin) || (!(spiralatrice.CheckPotMan||spiralatrice.AbilitaModificaPotenziometri)))
 			{
-				p->min_duration_ms = def_min_check_tangled_wire_duration_ms;
+				p->cur_duration_ms = 0;
+				p->status = enum_status_check_tangled_wire_wait_lock;
+				break;
 			}
-			p->status = enum_status_check_tangled_wire_check;
-			p->vel_prod_vera = -1.0;
+			else
+			{
+				unsigned int elapsed_ms = 0;
+				unsigned long now = get_ul_timer_interrupt_count();
+				if (now >= p->ul_prev_timer_interrupt_count)
+				{
+					elapsed_ms = (now - p->ul_prev_timer_interrupt_count) * PeriodoIntMs;
+				}
+				p->ul_prev_timer_interrupt_count = now;
+				p->cur_duration_ms += elapsed_ms;
+				if (p->cur_duration_ms >= def_min_time_validate_after_lock_ms)
+				{
+					p->vel_prod_to_check = fv;
+					p->inv_vel_prod_to_check = 1.0 / fv;
+					p->status = enum_status_check_tangled_wire_check;
+				}
+
+			}
 			break;
 		}
 		case enum_status_check_tangled_wire_check:
 		case enum_status_check_tangled_wire_validate:
 		{
 			// if we are going very slow, maybe the wheels are not gripping so it is better not to check
-			if (velMMin < 0.1)
+			if (velMMin < def_min_speed_check_wire_tangle_mmin)
 			{
+				p->status = enum_status_check_tangled_wire_wait_lock;
 				p->cur_duration_ms = 0;
 				break;
-			}
-			if (p->vel_prod_vera != hprg.theRunning.vel_prod_vera)
-			{
-				p->vel_prod_vera = hprg.theRunning.vel_prod_vera;
-				if (hprg.theRunning.vel_prod_vera > 1e-3)
-				{
-					p->inv_vel_prod_vera = 1.0 / hprg.theRunning.vel_prod_vera;
-				}
-				else
-				{
-					p->inv_vel_prod_vera = 1;
-				}
 			}
 			unsigned int elapsed_ms = def_period_check_tangled_wire_ms;
 			unsigned long now = get_ul_timer_interrupt_count();
@@ -1447,7 +1469,7 @@ static void check_tangled_wire(void)
 			{
 				p->ul_prev_timer_interrupt_count = now;
 
-				unsigned int delta_speed_0_100 = 100 * fabs((velMMin - hprg.theRunning.vel_prod_vera) * p->inv_vel_prod_vera);
+				unsigned int delta_speed_0_100 = 100 * fabs((velMMin - p->vel_prod_to_check) * p->inv_vel_prod_to_check);
 				if (delta_speed_0_100 > p->speed_percentage)
 				{
 					if (p->status == enum_status_check_tangled_wire_check)
@@ -4096,6 +4118,8 @@ void vMacParmsAtDefaultValue(void){
     // tempo che il distanziatore impiega a scendere in posizione bassa
     // questo valore viene assegnato ad ogni programma che usa il distanziatore
 	macParms.usDelayDistanziaDownMs=800;
+
+	set_check_tangled_wire_params_default();
     
     
 // here the default setting ends and we calculate the crc    

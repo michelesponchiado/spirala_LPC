@@ -1620,6 +1620,7 @@ code TipoStructScegliStringa scegliStringa[enumStringType_NumOf]={
 	{enumStringType_SelezionaDistanziatore,&macParms.uc_distanziatore_type,0,enum_distanziatore_type_numOf-1,enumStr20_Distanziatore_NonPresente-enumStr20_FirstEnum,enumStr20_Distanziatore_Coltello-enumStr20_FirstEnum},
 	{enumStringType_AbilitaCompensazioneTemperatura,&macParms.ucAbilitaCompensazioneTemperatura,0,1,enumAllStr_Disabled,enumAllStr_Enabled},
 	{enumStringType_spindle_grinding_enable,&macParms.uc_enable_spindle_grinding,0,1,enumAllStr_Disabled,enumAllStr_Enabled},
+	{enumStringType_check_wire_tangled_enable,&macParms.check_wire_tangled_params.enable,0,1,enumAllStr_Disabled,enumAllStr_Enabled},
 
 };
 
@@ -1685,6 +1686,11 @@ typedef enum{
 	enumList_PM_abilita_quinta_portata,
 	enumList_PM_abilita_compensazione_temperatura,
 	enumList_PM_spindle_grinding_enable,
+
+	enumList_PM_chkwt_enable,
+	enumList_PM_chkwt_speed,
+	enumList_PM_chkwt_duration,
+
 	enumList_PM_lingua,
 	enumList_PM_password,
 	enumList_PM_serial_number,
@@ -1729,6 +1735,13 @@ code unsigned char ucSuperUserPasswordRequired[]={
 1,//{0,4, "n","%-1i"      ,0           ,0           ,(unsigned char xdata*)&macParms.ucAbilitaCompensazioneTemperatura,1,1,enumStr20_CompensazioneTemperatura,   enumPT_unsignedChar,enumUm_none,     enumStringType_AbilitaCompensazioneTemperatura,1},//
 // spindle grinding
 1, //	{0,4, "n","%-1i"      ,0           ,0           ,(unsigned char xdata*)&macParms.uc_enable_spindle_grinding,1,1,enumStr20_spindle_grinding,   enumPT_unsignedChar,enumUm_none,     enumStringType_spindle_grinding_enable,1},//
+// check wire tangled enable
+0,
+// check wire tangled speed
+0,
+// check wire tangled duration
+0,
+
 0,//{0,4, "n","%-1i"      ,0           ,0           ,(unsigned char xdata*)&nvram_struct.actLanguage                       ,1,1,enumStr20_Sel_Lingua,   enumPT_unsignedChar,enumUm_none,     enumStringType_SelezionaLingua,1},//
 // password
 0,//{0,5, defPictureString_Password,"%-5li",0,99999,(unsigned char xdata*)&macParms.password,          1,1,enumStr20_password,enumPT_unsignedLong, enumUm_modify_password,enumStringType_none,1}, //...
@@ -1779,7 +1792,12 @@ code TipoStructInfoParametro_Lingua if_PM[]={
 // spindle grinding
 	{0,4, "n","%-1i"      ,0           ,0           ,(unsigned char xdata*)&macParms.uc_enable_spindle_grinding,1,1,enumStr20_spindle_grinding,   enumPT_unsignedChar,enumUm_none,     enumStringType_spindle_grinding_enable,1},//
 
-
+// check wire tangled enable
+	{0,4, "n","%-1i"      	,0  						,0 							,(unsigned char xdata*)&(macParms.check_wire_tangled_params.enable),	1,1,enumStr20_Enable_Check_Wire_tangled,   	enumPT_unsignedInt,enumUm_none,     	enumStringType_check_wire_tangled_enable,1},//
+// check wire tangled speed percentage
+	{0,3, "nnn","%-3i"      ,def_min_chkwt_speed_perc   ,def_max_chkwt_speed_perc  	,(unsigned char xdata*)&(ipm.uiTheUInt),	1,1,enumStr20_Speed_Check_Wire_tangled,   	enumPT_unsignedInt,enumUm_percentuale,	enumStringType_none,1},//
+// check wire tangled duration
+	{0,5, "nnnnn","%-5i"	,def_min_chkwt_duration_ms  ,def_max_chkwt_duration_ms  ,(unsigned char xdata*)&(ipm.uiTheUInt),	1,1,enumStr20_Duration_Check_Wire_tangled,  enumPT_unsignedInt,enumUm_millisecondi,	enumStringType_none,1},//
 
 	{0,4, "n","%-1i"      ,0           ,0           ,(unsigned char xdata*)&nvram_struct.actLanguage                       ,1,1,enumStr20_Sel_Lingua,   enumPT_unsignedChar,enumUm_none,     enumStringType_SelezionaLingua,1},//
 // password
@@ -1924,6 +1942,18 @@ void vRefresh_IPM_values(unsigned char idxParametro){
 		case enumList_PM_durata_bandella:
 			ipm.uiTheUInt=macParms.uiDurataAttivazioneBandella_centesimi_secondo;
 			break;
+
+		case enumList_PM_chkwt_speed:
+		{
+			ipm.uiTheUInt=macParms.check_wire_tangled_params.speed_percentage;
+			break;
+		}
+		case enumList_PM_chkwt_duration:
+		{
+			ipm.uiTheUInt=macParms.check_wire_tangled_params.min_duration_ms;
+			break;
+		}
+
 		case enumList_PM_ritardo_bandella:
 			ipm.uiTheUInt=macParms.uiRitardoAttivazioneBandella_centesimi_secondo;
 			break;
@@ -2082,6 +2112,26 @@ unsigned char ucHW_ParametriMacchina(void){
 					macParms.uiDurataAttivazioneBandella_centesimi_secondo=ipm.uiTheUInt;
 					vInitBandella();
 					break;
+
+				case enumList_PM_chkwt_enable:
+				{
+					set_check_tangled_wire_params_default();
+					break;
+				}
+				case enumList_PM_chkwt_speed:
+				{
+					macParms.check_wire_tangled_params.speed_percentage = ipm.uiTheUInt;
+					set_check_tangled_wire_params_default();
+					break;
+				}
+				case enumList_PM_chkwt_duration:
+				{
+					macParms.check_wire_tangled_params.min_duration_ms = ipm.uiTheUInt;
+					set_check_tangled_wire_params_default();
+					break;
+				}
+
+
 				case enumList_PM_ritardo_bandella:
 					macParms.uiRitardoAttivazioneBandella_centesimi_secondo=ipm.uiTheUInt;
 					break;

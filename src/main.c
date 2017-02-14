@@ -115,7 +115,7 @@ For more information about the syntax of the linker scripts and how to modify th
 #ifdef defSimulaEncoder
 	#define defMajorNumFirmware_Scheda " X"
 #else
-	#define defMajorNumFirmware_Scheda " 3"
+	#define defMajorNumFirmware_Scheda " 5"
 #endif
 
 //
@@ -132,16 +132,18 @@ For more information about the syntax of the linker scripts and how to modify th
 #ifdef defSimulaEncoder
 	#define defMinorNumFirmware_Scheda "XX"
 #else
-	#define defMinorNumFirmware_Scheda "36"
+	#define defMinorNumFirmware_Scheda "01"
 #endif
 
 // version history
 //
-// 3.36
+// 5.01
 // work almost OK with LPCXpresso
 // * MASSIMO NUMERO PEZZI IN PRODUZIONE PORTATO A 99'999  , ERA 9'999
 // * minimo diametro mandrino portato a 0.2mm, la risoluzione in inch è 0.001 inch = 0.02mm = 2 centesimi di mm OK
 // * minimo diametro filo portato a 0.02mm, la risoluzione in inch è 0.0001 inch = 0.002mm = 2 micron OK
+// * risolto bug per cui numero pezzi produzione manuale veniva sempre azzerato anche facendo back da controllo produzione
+// * aggiunti parametri per check filo aggrovigliato in funzione della velocitù del filo
 //
 // 3.35
 // recompiled under LPCXpresso

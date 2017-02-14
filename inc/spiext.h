@@ -10,7 +10,7 @@
 
 
 // per simulare l'encoder...
-#define defSimulaEncoder
+//#define defSimulaEncoder
 
 /* Definizione del tipo di memoria in cui devono essere allocate le variabili
    cui si dovrebbe accedere rapidamente. Se si usa un 8052, o comunque un
@@ -876,6 +876,7 @@ typedef enum{
 	enumStringType_SelezionaDistanziatore,
 	enumStringType_AbilitaCompensazioneTemperatura,
 	enumStringType_spindle_grinding_enable,
+	enumStringType_check_wire_tangled_enable,
 	enumStringType_NumOf
 
 }enumStringType;

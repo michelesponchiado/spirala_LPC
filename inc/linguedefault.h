@@ -299,6 +299,9 @@
 	"START per iniziare",	// grinding NOT running help
 	"Azzero pezzi ?",	// azzero pezzi gia' prodotti?
 	"err. velocita' filo",	// errore nella velocità della ruota di contrasto: filo aggrovigliato?
+	"filo aggrov. check", 	// #define enumStr20_Enable_Check_Wire_tangled 293
+	"aggrov. soglia vel", 	// #define enumStr20_Speed_Check_Wire_tangled 294
+	"aggrov. min tempo", 	// #define enumStr20_Duration_Check_Wire_tangled 295
 		
 };
 
@@ -622,8 +625,13 @@
 	"STOP",	// grinding NOT running
 	"Press STOP to halt",	// grinding running help
 	"Press START to begin",	// grinding NOT running help
-	"Reset num pieces?" // reset num of pieces made?
+	"Reset num pieces?", // reset num of pieces made?
 	"wire speed error",	// errore nella velocità della ruota di contrasto: filo aggrovigliato?
+	"tangl. wire check", 	// #define enumStr20_Enable_Check_Wire_tangled 293
+	"tangl. speed set", 	// #define enumStr20_Speed_Check_Wire_tangled 294
+	"tangl. time set", 		// #define enumStr20_Duration_Check_Wire_tangled 295
+
+
 };
 
 

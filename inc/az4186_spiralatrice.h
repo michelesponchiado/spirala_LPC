@@ -44,23 +44,23 @@ typedef struct _type_stop_spindle
 typedef enum
 {
 	enum_status_check_tangled_wire_idle = 0,
+	enum_status_check_tangled_wire_wait_lock,
 	enum_status_check_tangled_wire_check,
 	enum_status_check_tangled_wire_validate,
 	enum_status_check_tangled_wire_alarm,
 	enum_status_check_tangled_wire_numof
 }enum_status_check_tangled_wire;
 
-#define def_min_check_tangled_wire_duration_ms 1000
 #define def_period_check_tangled_wire_ms 100
 
 typedef struct _type_check_tangled_wire
 {
 	enum_status_check_tangled_wire status;
-	unsigned char speed_percentage; // a percentage of 0 means check disabled
+	unsigned int speed_percentage; // a percentage of 0 means check disabled
 	unsigned int min_duration_ms;
 	unsigned int cur_duration_ms;
-	float inv_vel_prod_vera;
-	float vel_prod_vera;
+	float inv_vel_prod_to_check;
+	float vel_prod_to_check;
 	unsigned long ul_prev_timer_interrupt_count;
 }type_check_tangled_wire;
 

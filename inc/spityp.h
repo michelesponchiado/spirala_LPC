@@ -353,6 +353,20 @@ typedef struct _MACPARMS_V4 {
 } MACPARMS_V4;
 
 
+#define def_min_chkwt_speed_perc 1
+#define def_max_chkwt_speed_perc 800
+
+#define def_min_chkwt_duration_ms 1000
+#define def_max_chkwt_duration_ms 15000
+
+typedef struct _type_check_wire_tangled_params
+{
+	unsigned char enable;				// enable the check
+	unsigned int speed_percentage; 		// the speed percentage to use
+	unsigned int min_duration_ms;		// minimum duration [ms]
+}type_check_wire_tangled_params;
+
+void set_check_tangled_wire_params_default(void);
 
 // parametri macchina versione 5
 typedef struct _MACPARMS {
@@ -422,6 +436,8 @@ typedef struct _MACPARMS {
 	// 
 	unsigned char ucAbilitaCompensazioneTemperatura;
 	unsigned char uc_enable_spindle_grinding;
+
+	type_check_wire_tangled_params check_wire_tangled_params;
 
 } MACPARMS;
 
