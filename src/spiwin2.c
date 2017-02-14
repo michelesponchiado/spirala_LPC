@@ -1332,8 +1332,13 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 			vTrasferisciDaCommesseAlistaLavori();
 			// prelevo il codice manuale se esiste, altrimenti il primo della lista correntemente selezionata
 			memcpy(&privato_lavoro.lavoro,pFindManualCodeInJobList(),sizeof(privato_lavoro.lavoro));
-            // azzero il numero di pezzi fatti!
-            privato_lavoro.lavoro.npezzifatti=0;
+			// if we are here coming from job mode, better to reset the number of pieces done
+			// but if we already are not in job mode, i.e. we already are in manual mode, we do not reset the number of pieces done
+			if (nvram_struct.ucComingToControlloProduzioneFromJobs)
+			{
+	            // azzero il numero di pezzi fatti!
+	            privato_lavoro.lavoro.npezzifatti=0;
+			}
 			//sprintf(iml[0].pc,iml[0].ucFmtField,privato_lavoro.lavoro.ucPosition);
 			sprintf(im_lottorapido[0].pc,im_lottorapido[0].ucFmtField,privato_lavoro.lavoro.uiNumeroPezzi);
 			sprintf(im_lottorapido[1].pc,im_lottorapido[1].ucFmtField,privato_lavoro.lavoro.fOhm);
