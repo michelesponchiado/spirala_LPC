@@ -3693,8 +3693,17 @@ unsigned char ucHW_listaLavori(void){
 
 
 			//strcpy(hw.ucString,"   Lista lavori   ");
-			vStringLangCopy(hw.ucString,enumStr20_Lista_Lavori);
-			ucPrintTitleButton(hw.ucString,defLL_Codice_rowTitle,defLL_Codice_colTitle,enumFontMedium,enumLL_Title,defLCD_Color_Trasparente,1);
+			if (!pJobsSelected->ucManual)
+			{
+				vStringLangCopy(hw.ucString,enumStr20_Lista_Lavori);
+				ucPrintTitleButton(hw.ucString,defLL_Codice_rowTitle,defLL_Codice_colTitle,enumFontMedium,enumLL_Title,defLCD_Color_Trasparente,1);
+			}
+			// se lavorazione manuale, stampo titolo in giallo: non si possono aggiungere job a lavorazione manuale
+			else
+			{
+				vStringLangCopy(hw.ucString,enumStr20_SingleJob);
+				ucPrintTitleButton(hw.ucString,defLL_Codice_rowTitle,defLL_Codice_colTitle,enumFontMedium,enumLL_Title,defLCD_Color_Yellow,1);
+			}
 
 			// codice prodotto con intestazione
 			// "FILO        LEGA      MANDRINO  NF  TOLL",
@@ -3723,10 +3732,15 @@ unsigned char ucHW_listaLavori(void){
 				// protezione: non posso rappresentare a video pi� di defMaxLavoriInLista lavori
 				if (pJobsSelected_Jobs->ucNumFirstLavoroVisualizzato+i>=defMaxLavoriInLista)
 					break;
-				if (pJobsSelected_Jobs->lista[pJobsSelected_Jobs->ucNumFirstLavoroVisualizzato+i].ucValidKey!=defLavoroValidoKey){
-					sprintf(hw.ucString," %-*.*s",19,19,pucStringLang(enumStr20_Aggiungi));
-					//sprintf(hw.ucString,"%2i ----     -------",pJobsSelected_Jobs->lista[pJobsSelected_Jobs->ucNumFirstLavoroVisualizzato+i].ucPosition);
-					ucPrintStaticButton(hw.ucString,defLL_Codice_rowCodes+defOffsetRow_listaLavori*i,defLL_Codice_col,enumFontMedium,enumLL_lavoro_1+i,defLCD_Color_Trasparente);
+				if (pJobsSelected_Jobs->lista[pJobsSelected_Jobs->ucNumFirstLavoroVisualizzato+i].ucValidKey!=defLavoroValidoKey)
+				{
+					// we can't add to a manual job!
+					if (!pJobsSelected->ucManual)
+					{
+						sprintf(hw.ucString," %-*.*s",19,19,pucStringLang(enumStr20_Aggiungi));
+						//sprintf(hw.ucString,"%2i ----     -------",pJobsSelected_Jobs->lista[pJobsSelected_Jobs->ucNumFirstLavoroVisualizzato+i].ucPosition);
+						ucPrintStaticButton(hw.ucString,defLL_Codice_rowCodes+defOffsetRow_listaLavori*i,defLL_Codice_col,enumFontMedium,enumLL_lavoro_1+i,defLCD_Color_Trasparente);
+					}
 					// se ho trovato il tappo, esco dal loop
 					break;
 				}

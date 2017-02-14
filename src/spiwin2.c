@@ -287,13 +287,25 @@ unsigned char ucPurgeManualCodesEmptyFromJobList(void)
 	return 1;
 }
 
-TipoLavoro *pFindManualCodeInJobList(void){
+static TipoLavoro *pFindManualCodeInJobList(unsigned int * pui_manual_code_found)
+{
+	unsigned int ui_manual_code_found = 0;
+	TipoLavoro *p_return = &pJobsSelected_Jobs->lista[0];
+
 	xdata unsigned char i;
-	for (i=0;i<nvram_struct.codelist.ucNumElem;i++){
+	for (i = 0; !ui_manual_code_found && (i < nvram_struct.codelist.ucNumElem); i++)
+	{
 		if (nvram_struct.codelist.codeJobList[i].ucManual)
-			return &nvram_struct.codelist.codeJobList[i].jobs.lista[0];
+		{
+			p_return = &nvram_struct.codelist.codeJobList[i].jobs.lista[0];
+			ui_manual_code_found = 1;
+		}
 	}
-	return &pJobsSelected_Jobs->lista[0];
+	if (pui_manual_code_found)
+	{
+		*pui_manual_code_found = ui_manual_code_found;
+	}
+	return p_return;
 
 }
 
@@ -1330,14 +1342,19 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 				ucCreateTheButton(i); 
 			// trasferisco dati da commessa a lista lavori
 			vTrasferisciDaCommesseAlistaLavori();
-			// prelevo il codice manuale se esiste, altrimenti il primo della lista correntemente selezionata
-			memcpy(&privato_lavoro.lavoro,pFindManualCodeInJobList(),sizeof(privato_lavoro.lavoro));
-			// if we are here coming from job mode, better to reset the number of pieces done
-			// but if we already are not in job mode, i.e. we already are in manual mode, we do not reset the number of pieces done
-			if (nvram_struct.ucComingToControlloProduzioneFromJobs)
 			{
-	            // azzero il numero di pezzi fatti!
-	            privato_lavoro.lavoro.npezzifatti=0;
+				unsigned int is_an_existent_manual_code;
+				TipoLavoro *pCode_manual;
+				pCode_manual = pFindManualCodeInJobList(&is_an_existent_manual_code);
+				// prelevo il codice manuale se esiste, altrimenti il primo della lista correntemente selezionata
+				memcpy(&privato_lavoro.lavoro, pCode_manual, sizeof(privato_lavoro.lavoro));
+				// if there was no manual code in the job list, better to cleanup the number of pieces done;
+				// if the manual code was in the joblist, we do not reset the number of pieces done
+				if (!is_an_existent_manual_code)
+				{
+		            // azzero il numero di pezzi fatti!
+		            privato_lavoro.lavoro.npezzifatti=0;
+				}
 			}
 			//sprintf(iml[0].pc,iml[0].ucFmtField,privato_lavoro.lavoro.ucPosition);
 			sprintf(im_lottorapido[0].pc,im_lottorapido[0].ucFmtField,privato_lavoro.lavoro.uiNumeroPezzi);
@@ -1406,7 +1423,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 								break;
 							}
 
-							// chiamo la procedura che si incarica di inserireil codice prodotto in lista, se non esiste
+							// chiamo la procedura che si incarica di inserire il codice prodotto in lista, se non esiste
 							vVerifyInsertCodiceProdotto(his.ucCodice);
 
 
@@ -1427,7 +1444,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 								}
 
 								// salvo il lavoro modificato/inserito...
-								memcpy(&pJobsSelected_Jobs->lista[0],&privato_lavoro.lavoro,sizeof(privato_lavoro.lavoro));
+								memcpy(&pJobsSelected_Jobs->lista[0], &privato_lavoro.lavoro, sizeof(privato_lavoro.lavoro));
 								// indico che c'� un solo lavoro in lista
 								pJobsSelected_Jobs->lista[1].ucValidKey=defLavoroNonValidoKey;
 								vCodelistTouched();
