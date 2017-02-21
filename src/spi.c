@@ -35,6 +35,9 @@
 #endif
 #include "az4186_temperature_compensation.h"
 
+#ifdef def_use_emac
+    #include "az4186_emac.h"
+#endif
 
 xdat TipoStructHandleDistanziatore hDist;
 
@@ -2470,6 +2473,9 @@ void spi_main(void){
 		vHMA_handle();
 		vHMA_handle();
 		vHMA_handle();
+#endif
+#ifdef def_use_emac
+	az4186_emac_loop();
 #endif
 
 	} /* for(;;) */

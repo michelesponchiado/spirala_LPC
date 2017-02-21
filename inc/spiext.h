@@ -12,6 +12,12 @@
 // per simulare l'encoder...
 //#define defSimulaEncoder
 
+// per abilitare EMAC
+#define def_use_emac
+#ifdef def_use_emac
+	#define defDisable_Anybus_Module
+#endif
+
 /* Definizione del tipo di memoria in cui devono essere allocate le variabili
    cui si dovrebbe accedere rapidamente. Se si usa un 8052, o comunque un
    micro che ha spazio per lo stack, allora ho memoria di tipo data a

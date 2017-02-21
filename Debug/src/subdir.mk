@@ -17,9 +17,11 @@ C_SRCS += \
 ../src/az4186_temperature_compensation.c \
 ../src/az4186_window_temperature_compensation.c \
 ../src/codelist.c \
+../src/crc32.c \
 ../src/crp.c \
 ../src/diskio.c \
 ../src/dma.c \
+../src/emac.c \
 ../src/fat_time.c \
 ../src/file_list.c \
 ../src/gui.c \
@@ -55,9 +57,11 @@ OBJS += \
 ./src/az4186_temperature_compensation.o \
 ./src/az4186_window_temperature_compensation.o \
 ./src/codelist.o \
+./src/crc32.o \
 ./src/crp.o \
 ./src/diskio.o \
 ./src/dma.o \
+./src/emac.o \
 ./src/fat_time.o \
 ./src/file_list.o \
 ./src/gui.o \
@@ -93,9 +97,11 @@ C_DEPS += \
 ./src/az4186_temperature_compensation.d \
 ./src/az4186_window_temperature_compensation.d \
 ./src/codelist.d \
+./src/crc32.d \
 ./src/crp.d \
 ./src/diskio.d \
 ./src/dma.d \
+./src/emac.d \
 ./src/fat_time.d \
 ./src/file_list.d \
 ./src/gui.d \

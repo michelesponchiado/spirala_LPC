@@ -25,6 +25,10 @@
     //#warning canopen enabled !!!!
     #include "az4186_can.h"
 #endif
+#ifdef def_use_emac
+    #include "az4186_emac.h"
+#endif
+
 
 // defines per abilitare i vari test
 //#define defTestLcd
@@ -131,6 +135,8 @@ For more information about the syntax of the linker scripts and how to modify th
 //
 #ifdef defSimulaEncoder
 	#define defMinorNumFirmware_Scheda "XX"
+#elif defined(def_use_emac)
+	#define defMinorNumFirmware_Scheda "04EMAC"
 #else
 	#define defMinorNumFirmware_Scheda "04"
 #endif
@@ -1469,6 +1475,10 @@ int main(void){
 #endif    
 	// faccio partire la routine di interrupt timer0
 	initTimer();
+
+#ifdef def_use_emac
+	az4186_emac_init();
+#endif
     
 	// attesa boot fpga: serve per evitare di spedire comandi ad fpga mentre sta facendo il boot
 	vWaitBootFpga();

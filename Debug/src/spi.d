@@ -37,7 +37,8 @@ src/spi.o src/spi.d: ../src/spi.c \
  /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_dac.h \
  /home/michele/LPCXpresso/workspace/spiralatrice/inc/rtcDS3231.h \
  /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_can.h \
- /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_temperature_compensation.h
+ /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_temperature_compensation.h \
+ /home/michele/LPCXpresso/workspace/spiralatrice/CANopen_stack/az4186_emac.h
 
 /home/michele/LPCXpresso/workspace/spiralatrice/inc/LPC23xx.h:
 
@@ -116,3 +117,5 @@ src/spi.o src/spi.d: ../src/spi.c \
 /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_can.h:
 
 /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_temperature_compensation.h:
+
+/home/michele/LPCXpresso/workspace/spiralatrice/CANopen_stack/az4186_emac.h:
