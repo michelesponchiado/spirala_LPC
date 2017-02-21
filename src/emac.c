@@ -1110,6 +1110,16 @@ static uint8_t dst_MAC_ADDRESS[my_ETH_ALEN] =
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff
 };
 
+static unsigned short csum(unsigned short *buf, int nwords)
+{
+	unsigned long sum;
+	for(sum=0; nwords>0; nwords--)
+		sum += *buf++;
+	sum = (sum >> 16) + (sum &0xffff);
+	sum += (sum >> 16);
+	return (unsigned short)(~sum);
+}
+
 static void build_my_udp_packet(type_build_packet_udp *p)
 {
 	uint32_t tx_len = 0;
@@ -1139,8 +1149,8 @@ static void build_my_udp_packet(type_build_packet_udp *p)
 		tx_len += sizeof(*iph);
 	}
 	// udp header
+	type_my_udphdr *udph = &p->udp.udp;
 	{
-		type_my_udphdr *udph = &p->udp.udp;
 		/* UDP Header */
 		udph->source = my_htons(3118);
 		udph->dest = my_htons(3119);
@@ -1158,7 +1168,7 @@ static void build_my_udp_packet(type_build_packet_udp *p)
 	/* Length of IP payload and header */
 	iph->tot_len = my_htons(tx_len - sizeof(type_my_ether_header));
 	/* Calculate IP checksum on completed header */
-	iph->check = csum((unsigned short *)(s_boot_check.sendbuf+sizeof(struct ether_header)), sizeof(struct iphdr) / 2);
+	iph->check = csum((unsigned short *)(p->buf + sizeof(type_my_ether_header)), sizeof(type_my_iphdr) / 2);
 	p->tx_len = tx_len;
 }
 
@@ -1230,7 +1240,8 @@ static void AllPacketGen ( void )
   txptr = (BYTE *)EMAC_TX_BUFFER_ADDR;
   for ( i = 0; i < EMAC_TX_BLOCK_NUM; i++ )
   {
-	PacketGen( txptr );
+	//PacketGen( txptr );
+	build_my_udp_packet((type_build_packet_udp *)txptr);
 	txptr += EMAC_BLOCK_SIZE;
   }
   return;

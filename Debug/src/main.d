@@ -29,7 +29,7 @@ src/main.o src/main.d: ../src/main.c \
  /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_emc.h \
  /home/michele/LPCXpresso/workspace/spiralatrice/inc/i2c_master.h \
  /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_can.h \
- /home/michele/LPCXpresso/workspace/spiralatrice/CANopen_stack/az4186_emac.h
+ /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_emac.h
 
 /home/michele/LPCXpresso/workspace/spiralatrice/inc/LPC23xx.h:
 
@@ -91,4 +91,4 @@ src/main.o src/main.d: ../src/main.c \
 
 /home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_can.h:
 
-/home/michele/LPCXpresso/workspace/spiralatrice/CANopen_stack/az4186_emac.h:
+/home/michele/LPCXpresso/workspace/spiralatrice/inc/az4186_emac.h:
