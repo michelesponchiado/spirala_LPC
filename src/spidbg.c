@@ -2660,6 +2660,8 @@ void vResetRamAndReboot(void){
 	vRefreshScreen();
 // reset variabili non volatili!	
 	memset(&nvram_struct,0,sizeof(nvram_struct));
+// set language = English
+	nvram_struct.actLanguage = 1;
 //	vInitDataAndBssSections();
 	vLCD_Init();
 	// pulisco lo schermo

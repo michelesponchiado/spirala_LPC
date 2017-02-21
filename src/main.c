@@ -132,13 +132,16 @@ For more information about the syntax of the linker scripts and how to modify th
 #ifdef defSimulaEncoder
 	#define defMinorNumFirmware_Scheda "XX"
 #else
-	#define defMinorNumFirmware_Scheda "03"
+	#define defMinorNumFirmware_Scheda "04"
 #endif
 
 // version history
 //
+// 5.04
+// * reset della ram imposta la lingua ad inglese
+//
 // 5.03
-// * ATTENZIONE! Da questa evrsione vengono supportati 4 fili per cui installandola vengono perse le commesse, e le tolleranze vengono reinizializzate a default
+// * ATTENZIONE! Da questa versione vengono supportati 4 fili per cui installandola vengono perse le commesse, e le tolleranze vengono reinizializzate a default
 // * disabilitate le modifiche per gestione articoli (codice prodotto + resistenza spira + numero pezzi + modo + res spec fili)
 // * abilitato quarto filo
 // * nell'inserimento delle lavorazioni, sia automatiche che manuali, se numero pezzi o ohm spirale è a 0, vengono visualizzate con fondo giallo per evidenziare che non sono inizializzate
