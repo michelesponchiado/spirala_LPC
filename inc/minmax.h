@@ -93,7 +93,7 @@
 
 /* Numero minimo e massimo di fili che possono comporre la spira. */
 #define MIN_NUM_FILI         1
-#define MAX_NUM_FILI         3
+#define MAX_NUM_FILI         4
 
 // numero max di pezzi che possono essere inseriti in lotto
 #define MIN_QUANTITA	     0

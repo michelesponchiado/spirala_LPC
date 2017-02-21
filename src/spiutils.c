@@ -1732,7 +1732,14 @@ unsigned char ucT9_handle_button_pressed(unsigned char ucButton){
 		paramsNumK.ucT9_lastCharIdx=0;
 	}
 	else{
-		if (++paramsNumK.ucT9_lastCharIdx>=ucCodes_T9[paramsNumK.ucT9_lastButton].ucNumOf){
+		const TipoStructCodesT9 *p_code = &ucCodes_T9[paramsNumK.ucT9_lastButton];
+		if (p_code->ucNumOf <= 1)
+		{
+			paramsNumK.ucT9_lastCharIdx=0;
+			paramsNumK.ucT9_found=p_code->ucChars[0];
+		}
+		else if (++paramsNumK.ucT9_lastCharIdx >= p_code->ucNumOf)
+		{
 			paramsNumK.ucT9_lastCharIdx=0;
 		}
 	}

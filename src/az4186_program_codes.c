@@ -657,7 +657,10 @@ void vInitProgramList(void){
     }
     else{
         // set actual program using the offset of last block walked
-        uiSetActPrg(ul_reg_file_cur_id(ui_handle_product_codes, enum_reg_file_id_required_last_block_walked));
+    	unsigned long ul_program = ul_reg_file_cur_id(ui_handle_product_codes, enum_reg_file_id_required_last_block_walked);
+    	// set both the running and the current program
+        uiSetActPrg(ul_program);
+        uiSetRunningPrg(ul_program);
     }
 
 }//void vInitProgramList(void)

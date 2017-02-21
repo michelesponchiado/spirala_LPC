@@ -858,12 +858,12 @@ unsigned char ucHW_modificaLavoro(void){
 			ucPrintSmallText_ColNames(hw.ucString,defML_Codice_rowNumPezzi-14,0);
 			sprintf(hw.ucString," %-7i",privato_lavoro.lavoro.uiNumeroPezzi);
 
+
+			ucPrintStaticButton(hw.ucString,defML_Codice_rowNumPezzi,defML_Codice_colNumPezzi,enumFontMedium,enumML_numpezzi,privato_lavoro.lavoro.uiNumeroPezzi ? defLCD_Color_Trasparente : defLCD_Color_Yellow);
 			// non ha senso specificare accuratezza migliore dell'1 per diecimila, per cui
 			// se raggiungo i 10000 ohm, non devo avere decimali
 			if (privato_lavoro.lavoro.fOhm>=10000)
 				privato_lavoro.lavoro.fOhm=(int)privato_lavoro.lavoro.fOhm;
-
-			ucPrintStaticButton(hw.ucString,defML_Codice_rowNumPezzi,defML_Codice_colNumPezzi,enumFontMedium,enumML_numpezzi,defLCD_Color_Trasparente);
 			if (privato_lavoro.lavoro.fOhm>=10000){
 				sprintf(hw.ucString,"%-7.1i",(int)privato_lavoro.lavoro.fOhm);
 			}
@@ -871,7 +871,7 @@ unsigned char ucHW_modificaLavoro(void){
 				sprintf(hw.ucString,"%-7.2f",privato_lavoro.lavoro.fOhm);
 			}
 
-			ucPrintStaticButton(hw.ucString,defML_Codice_rowOhm,defML_Codice_colOhm,enumFontMedium,enumML_ohm,defLCD_Color_Trasparente);
+			ucPrintStaticButton(hw.ucString,defML_Codice_rowOhm,defML_Codice_colOhm,enumFontMedium,enumML_ohm,privato_lavoro.lavoro.fOhm > 0 ? defLCD_Color_Trasparente : defLCD_Color_Yellow);
 
 			// modo di funzionamento
 			//sprintf(hw.ucString,"%-40.40s",pucStringLang(enumStr20_Sel_Funzionamento));
@@ -946,19 +946,26 @@ unsigned char ucHW_modificaLavoro(void){
 
 
 // per inserimento ohm/m filo
-code TipoStructInfoFieldCodice_Lingua im_ohmm_fili[3]={
+code TipoStructInfoFieldCodice_Lingua im_ohmm_fili[4]={
 	{0,defMaxCharOhmMFilo, "NNNNNN","%6.3f",MIN_RESSPEC_FILO,MAX_RESSPEC_FILO,NULL,    1,1,enumStr20_Ohmm_filo1,enumUm_ohm_per_metro,"NNNNNNN","%7.3f"},
 	{0,defMaxCharOhmMFilo, "NNNNNN","%6.3f",MIN_RESSPEC_FILO,MAX_RESSPEC_FILO,NULL,    1,1,enumStr20_Ohmm_filo2,enumUm_ohm_per_metro,"NNNNNNN","%7.3f"},
 	{0,defMaxCharOhmMFilo, "NNNNNN","%6.3f",MIN_RESSPEC_FILO,MAX_RESSPEC_FILO,NULL,    1,1,enumStr20_Ohmm_filo3,enumUm_ohm_per_metro,"NNNNNNN","%7.3f"},
+	{0,defMaxCharOhmMFilo, "NNNNNN","%6.3f",MIN_RESSPEC_FILO,MAX_RESSPEC_FILO,NULL,    1,1,enumStr20_Ohmm_filo4,enumUm_ohm_per_metro,"NNNNNNN","%7.3f"},
 };
 
+code TipoStructInfoFieldCodice_Lingua im_article_save[1]={
+	{0,defMaxCharArticleName, "xxxxxxxxxxxxxxxxxxxx","%-20s",0,1,NULL,    1,0,enumStr20_Article_name,enumUm_none,"xxxxxxxxxxxxxxxxxxxx","%-20s"},
+};
 
 // inserimento dei valori ohm/metro dei fili...
 unsigned char ucHW_inserisciOhmMfili(void){
 	#define defOMF_title_row 8
 	#define defOMF_title_col 48
 
-	#define defOMF_ohmm_filo_row 64
+	#define defOMF_article_save_row 34
+	#define defOMF_article_save_col 0
+
+	#define defOMF_ohmm_filo_row 48
 	#define defOMF_ohmm_filo_col 0
 
 	#define defOMF_OK_row (defLcdWidthY_pixel-32-8)
@@ -976,12 +983,15 @@ unsigned char ucHW_inserisciOhmMfili(void){
 			enumOMF_ohmm_filo_1=0,
 			enumOMF_ohmm_filo_2,
 			enumOMF_ohmm_filo_3,
+			enumOMF_ohmm_filo_4,
 			enumOMF_Title,
 			enumOMF_Home,
 
+			enumOMF_article_save,
 			enumOMF_ohmm__titolo_filo_1,
 			enumOMF_ohmm__titolo_filo_2,
 			enumOMF_ohmm__titolo_filo_3,
+			enumOMF_ohmm__titolo_filo_4,
 
 			enumOMF_ohmm_WireLengthWorkingJob,
 			enumOMF_ohmm_WireLengthAllOrders,
@@ -999,18 +1009,53 @@ unsigned char ucHW_inserisciOhmMfili(void){
 	xdata unsigned char i,j;
 	extern unsigned char ucCalcWireLengthMetersForJobList(xdata float *pfWireLengthMeters);
 	xdata float fWireLengthMeters[2];
+	unsigned int nf = atoi(his.ucNumFili);
+	unsigned int offsetBetweenRows = defOMF_OffsetBetweenRows;
+	if (nf >= 4)
+	{
+		offsetBetweenRows = 30;
+	}
 	switch(uiGetStatusCurrentWindow()){
 		case enumWindowStatus_Null:
 		case enumWindowStatus_WaitingReturn:
 		default:
 			return 0;
 		case enumWindowStatus_ReturnFromCall:
-			nvram_struct.resspec[defGetWinParam(defWinParam_OMF_NumCampo)]=atof(hw.ucStringNumKeypad_out);
-			if (nvram_struct.actUM==UM_IN){
-				nvram_struct.resspec[defGetWinParam(defWinParam_OMF_NumCampo)]*=metri2feet;
+		{
+			unsigned int field_num = defGetWinParam(defWinParam_OMF_NumCampo);
+			switch(field_num)
+			{
+#ifdef def_enable_items
+				case enumOMF_article_save:
+				{
+					// do article save! the name is in hw.ucStringNumKeypad_out
+					break;
+				}
+#endif
+				case enumOMF_ohmm_filo_1:
+				case enumOMF_ohmm_filo_2:
+				case enumOMF_ohmm_filo_3:
+				case enumOMF_ohmm_filo_4:
+				{
+					int idx_resspec = field_num - enumOMF_ohmm_filo_1;
+					if (idx_resspec >= 0 && idx_resspec < MAX_NUM_FILI)
+					{
+						nvram_struct.resspec[idx_resspec] = atof(hw.ucStringNumKeypad_out);
+						if (nvram_struct.actUM==UM_IN)
+						{
+							nvram_struct.resspec[idx_resspec] *= metri2feet;
+						}
+					}
+					break;
+				}
+				default:
+				{
+					break;
+				}
 			}
 			vSetStatusCurrentWindow(enumWindowStatus_Active);
 			return 2;
+		}
 		case enumWindowStatus_Initialize:
 			for (i=0;i<enumOMF_NumOfButtons;i++)
 				ucCreateTheButton(i); 
@@ -1062,13 +1107,36 @@ unsigned char ucHW_inserisciOhmMfili(void){
 						case enumOMF_ohmm_filo_1:
 						case enumOMF_ohmm_filo_2:
 						case enumOMF_ohmm_filo_3:
+						case enumOMF_ohmm_filo_4:
+#ifdef def_enable_items
+						case enumOMF_article_save:
+#endif
 							j=i-enumOMF_ohmm_filo_1;
-							paramsNumK.ucMaxNumChar=im_ohmm_fili[j].ucLenField;	
+							const TipoStructInfoFieldCodice_Lingua * pif = NULL;
+							if (i == enumOMF_article_save)
+							{
+								pif = &im_article_save[0];
+								snprintf(hw.ucStringNumKeypad_in, sizeof(hw.ucStringNumKeypad_in), pif->ucFmtField, "test article name");
+								paramsNumK.ucEnableT9 = 1;
+							}
+							else
+							{
+								pif = &im_ohmm_fili[j];
+								// copio la stringa con cui si inizializza il numeric keypad
+								if (nvram_struct.actUM==UM_IN){
+									sprintf(hw.ucStringNumKeypad_in,pif->ucFmtFieldInch,nvram_struct.resspec[j]*feet2metri);
+								}
+								else{
+									sprintf(hw.ucStringNumKeypad_in,pif->ucFmtField,nvram_struct.resspec[j]);
+								}
+								paramsNumK.ucEnableT9 = 0;
+							}
+							paramsNumK.ucMaxNumChar=pif->ucLenField;
 							// imposto stringa di picture
-							mystrcpy((char*)paramsNumK.ucPicture,(char*)im_ohmm_fili[j].ucPictField,sizeof(paramsNumK.ucPicture)-1);
-							paramsNumK.fMin=im_ohmm_fili[j].fMin;
-							paramsNumK.fMax=im_ohmm_fili[j].fMax;
-							paramsNumK.enumUm=im_ohmm_fili[j].enumUm;
+							mystrcpy((char*)paramsNumK.ucPicture,(char*)pif->ucPictField,sizeof(paramsNumK.ucPicture)-1);
+							paramsNumK.fMin=pif->fMin;
+							paramsNumK.fMax=pif->fMax;
+							paramsNumK.enumUm=pif->enumUm;
 
 							// imposto limiti min e max
 							if (nvram_struct.actUM==UM_IN){
@@ -1077,19 +1145,11 @@ unsigned char ucHW_inserisciOhmMfili(void){
 								paramsNumK.fMin=MIN_RESSPEC_FILO_OHM_FEET;
 								paramsNumK.fMax=MAX_RESSPEC_FILO_OHM_FEET;
 							}
-							//strcpy(paramsNumK.ucTitle,im_ohmm_fili[j].stringa);
-							vStringLangCopy(paramsNumK.ucTitle,im_ohmm_fili[i].stringa);
-							// copio la stringa con cui si inizializza il numeric keypad
-							if (nvram_struct.actUM==UM_IN){
-								sprintf(hw.ucStringNumKeypad_in,im_ohmm_fili[j].ucFmtFieldInch,nvram_struct.resspec[j]*feet2metri);
-							}
-							else{
-								sprintf(hw.ucStringNumKeypad_in,im_ohmm_fili[j].ucFmtField,nvram_struct.resspec[j]);
-							}
+							vStringLangCopy(paramsNumK.ucTitle,pif->stringa);
 							// imposto abilitazione uso stringa picture
-							paramsNumK.ucPictureEnable=im_ohmm_fili[j].ucPictureEnable;	// abilitazione stringa picture
+							paramsNumK.ucPictureEnable=pif->ucPictureEnable;	// abilitazione stringa picture
 							// imposto abilitazione uso min/max
-							paramsNumK.ucMinMaxEnable=im_ohmm_fili[j].ucMinMaxEnable;	// abilitazione controllo valore minimo/massimo
+							paramsNumK.ucMinMaxEnable=pif->ucMinMaxEnable;	// abilitazione controllo valore minimo/massimo
 							// indico qual � il campo che sto modificando
 							defSetWinParam(defWinParam_OMF_NumCampo,i);
 							// chiamo il numeric keypad 
@@ -1109,12 +1169,31 @@ unsigned char ucHW_inserisciOhmMfili(void){
                     hw.ucString[4]='F';
                 }
             }
+
+
 			//ucPrintStaticButton(hw.ucString,defOMF_title_row,defOMF_title_col,enumFontMedium,enumOMF_Title,defLCD_Color_LightGreen);
 			ucPrintTitleButton(hw.ucString,defOMF_title_row,defOMF_title_col,enumFontMedium,enumOMF_Title,defLCD_Color_Trasparente,1);
+#ifdef def_enable_items
+			// pulsante "salva articolo"
+			{
+				enumFontType eFont = enumFontMedium;
+				unsigned char *puc = pucStringLang(enumStr20_Article_Save);
+				int string_length = snprintf(hw.ucString, sizeof(hw.ucString), "%s",puc);
+				int col = defLcdWidthX_pixel;
+				col -= ucFontSizePixelXY[eFont][0] * string_length;
+				col -= 4;
+				if (col < 0 || col > defLcdWidthX_pixel)
+				{
+					col = 0;
+				}
+				ucPrintStaticButton(hw.ucString, defOMF_article_save_row, col, enumFontMedium, enumOMF_article_save, defLCD_Color_Yellow);
+			}
+#endif
+
 			for (i=0;(i<MAX_NUM_FILI)&&(i<atoi(his.ucNumFili));i++){
 				sprintf(hw.ucString,"%s %1i:",pucStringLang(enumStr20_Filo),i+1);
 				j=strlen(hw.ucString);
-				ucPrintTitleButton(hw.ucString,defOMF_ohmm_filo_row+i*defOMF_OffsetBetweenRows,defOMF_ohmm_filo_col,enumFontMedium,enumOMF_ohmm__titolo_filo_1+i,defLCD_Color_Trasparente,0);
+				ucPrintTitleButton(hw.ucString,defOMF_ohmm_filo_row+i*offsetBetweenRows,defOMF_ohmm_filo_col,enumFontMedium,enumOMF_ohmm__titolo_filo_1+i,defLCD_Color_Trasparente,0);
 
 				if (nvram_struct.resspec[i]<MIN_RESSPEC_FILO)
 					nvram_struct.resspec[i]=MIN_RESSPEC_FILO;
@@ -1124,13 +1203,13 @@ unsigned char ucHW_inserisciOhmMfili(void){
 					sprintf(hw.ucString,"%6.3f",nvram_struct.resspec[i]*feet2metri);
 				else
 					sprintf(hw.ucString,"%6.3f",nvram_struct.resspec[i]);
-				ucPrintStaticButton(hw.ucString,defOMF_ohmm_filo_row+i*defOMF_OffsetBetweenRows,defOMF_ohmm_filo_col+j*16+16,enumFontMedium,enumOMF_ohmm_filo_1+i,defLCD_Color_Trasparente);
+				ucPrintStaticButton(hw.ucString,defOMF_ohmm_filo_row+i*offsetBetweenRows,defOMF_ohmm_filo_col+j*16+16,enumFontMedium,enumOMF_ohmm_filo_1+i,defLCD_Color_Trasparente);
 				if (nvram_struct.actUM==UM_IN)
 					sprintf(hw.ucString,"%s",pucStringLang(enumStr20_FirstUm+enumUm_ohm_per_feet));
 				else
 					sprintf(hw.ucString,"%s",pucStringLang(enumStr20_FirstUm+enumUm_ohm_per_metro));
-				//ucPrintSmallText_ColNames(hw.ucString,defOMF_ohmm_filo_row+i*defOMF_OffsetBetweenRows-12,defOMF_ohmm_filo_col);
-				ucPrintTitleButton(hw.ucString,defOMF_ohmm_filo_row+i*defOMF_OffsetBetweenRows+4,defOMF_ohmm_filo_col+j*16+16+6*16+12,enumFontSmall,enumOMF_ohmm__titolo_filo_1+i,defLCD_Color_Trasparente,0);
+				//ucPrintSmallText_ColNames(hw.ucString,defOMF_ohmm_filo_row+i*offsetBetweenRows-12,defOMF_ohmm_filo_col);
+				ucPrintTitleButton(hw.ucString,defOMF_ohmm_filo_row+i*offsetBetweenRows+4,defOMF_ohmm_filo_col+j*16+16+6*16+12,enumFontSmall,enumOMF_ohmm__titolo_filo_1+i,defLCD_Color_Trasparente,0);
 			}
 
 			if (ucCalcWireLengthMetersForJobList(&fWireLengthMeters[0])){
@@ -1141,7 +1220,7 @@ unsigned char ucHW_inserisciOhmMfili(void){
 				else{
 					sprintf(hw.ucString+strlen(hw.ucString),":%6.1fmt",fWireLengthMeters[0]);
 				}
-				ucPrintTitleButton(hw.ucString,defOMF_ohmm_filo_row+(i-1)*defOMF_OffsetBetweenRows+4+14*0+36,10,enumFontSmall,enumOMF_ohmm_WireLengthWorkingJob,defLCD_Color_Trasparente,1);
+				ucPrintTitleButton(hw.ucString,defOMF_ohmm_filo_row+(i-1)*offsetBetweenRows+4+14*0+36,10,enumFontSmall,enumOMF_ohmm_WireLengthWorkingJob,defLCD_Color_Trasparente,1);
 
 				vString40LangCopy(hw.ucString,enumStr40_WireLengthAllOrders);
 				if (nvram_struct.actUM==UM_IN){
@@ -1150,7 +1229,7 @@ unsigned char ucHW_inserisciOhmMfili(void){
 				else{
 					sprintf(hw.ucString+strlen(hw.ucString),":%6.1fmt",fWireLengthMeters[1]);
 				}
-				ucPrintTitleButton(hw.ucString,defOMF_ohmm_filo_row+(i-1)*defOMF_OffsetBetweenRows+4+18*1+36,10,enumFontSmall,enumOMF_ohmm_WireLengthAllOrders,defLCD_Color_Trasparente,1);
+				ucPrintTitleButton(hw.ucString,defOMF_ohmm_filo_row+(i-1)*offsetBetweenRows+4+18*1+36,10,enumFontSmall,enumOMF_ohmm_WireLengthAllOrders,defLCD_Color_Trasparente,1);
 			}
 
 #if 0
@@ -1243,10 +1322,10 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 	#define defLD_title_row 6
 	#define defLD_title_col 0
 
-	#define defLD_NumPezzi_row 48
+	#define defLD_NumPezzi_row 44
 	#define defLD_NumPezzi_col 0
 
-	#define defOffsetBetweenLines 44
+	#define defOffsetBetweenLines 40
 
 	#define defLD_Ohm_row defLD_NumPezzi_row
 	#define defLD_Ohm_col (defLcdWidthX_pixel/2+16)
@@ -1290,6 +1369,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 			enumLD_OhmM_filo_1,
 			enumLD_OhmM_filo_2,
 			enumLD_OhmM_filo_3,
+			enumLD_OhmM_filo_4,
 			enumLD_Tolleranza,
 			enumLD_Modo,
 			enumLD_Title,
@@ -1418,6 +1498,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 						case enumLD_OhmM_filo_1:
 						case enumLD_OhmM_filo_2:
 						case enumLD_OhmM_filo_3:
+						case enumLD_OhmM_filo_4:
 						case enumLD_Dx:
 							if (privato_lavoro.lavoro.ucValidKey!=defLavoroValidoKey){
 								break;
@@ -1501,7 +1582,6 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 							else
 								paramsNumK.ucEnableT9=0;
 
-							//strcpy(paramsNumK.ucTitle,im_ohmm_fili[j].stringa);
 							// titolo del numeric keypad
 							vStringLangCopy(paramsNumK.ucTitle,im_lottorapido[i].stringa);
 							// copio la stringa con cui si inizializza il numeric keyupad
@@ -1589,18 +1669,20 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 			privato_lavoro.lavoro.uiNumeroPezzi=atoi(im_lottorapido[0].pc);
 			privato_lavoro.lavoro.fOhm=atof(im_lottorapido[1].pc);
 			mystrcpy(privato_lavoro.lavoro.ucDescrizione,im_lottorapido[2].pc,sizeof(privato_lavoro.lavoro.ucDescrizione)-1);
-			if ( (  (privato_lavoro.lavoro.uiNumeroPezzi<=im_lottorapido[enum_campi_LD_numpezzi].fMax)
-				  &&(privato_lavoro.lavoro.uiNumeroPezzi>=im_lottorapido[enum_campi_LD_numpezzi].fMin)
-				 )
-				&&(
-				     (privato_lavoro.lavoro.fOhm<=im_lottorapido[enum_campi_LD_ohm].fMax)
-				   &&(privato_lavoro.lavoro.fOhm>=im_lottorapido[enum_campi_LD_ohm].fMin)
-				)
-				){
+			unsigned int num_pezzi_valido = (  (privato_lavoro.lavoro.uiNumeroPezzi<=im_lottorapido[enum_campi_LD_numpezzi].fMax)
+											 &&(privato_lavoro.lavoro.uiNumeroPezzi>=im_lottorapido[enum_campi_LD_numpezzi].fMin)
+					                        );
+			unsigned int num_ohm_valido = (   (privato_lavoro.lavoro.fOhm<=im_lottorapido[enum_campi_LD_ohm].fMax)
+											&&(privato_lavoro.lavoro.fOhm>=im_lottorapido[enum_campi_LD_ohm].fMin)
+										  );
+			if ( num_pezzi_valido && num_ohm_valido )
+			{
 				privato_lavoro.lavoro.ucValidKey=defLavoroValidoKey;
 			}
 			else
+			{
 				privato_lavoro.lavoro.ucValidKey=defLavoroNonValidoKey;
+			}
 
 			vStringLangCopy(hw.ucString,enumStr20_Inserisci_Lavoro);
 			//ucPrintStaticButton(hw.ucString,defLD_title_row,defLD_title_col,enumFontMedium,enumLD_Title,defLCD_Color_Green);
@@ -1614,7 +1696,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 			ucPrintSmallText_ColNames(hw.ucString,defLD_NumPezzi_row-14,defLD_NumPezzi_col);
 
 			sprintf(hw.ucString," %-7i",privato_lavoro.lavoro.uiNumeroPezzi);
-			ucPrintStaticButton(hw.ucString,defLD_NumPezzi_row,defLD_NumPezzi_col,enumFontMedium,enumLD_numPezzi,defLCD_Color_Trasparente);
+			ucPrintStaticButton(hw.ucString,defLD_NumPezzi_row,defLD_NumPezzi_col,enumFontMedium,enumLD_numPezzi, num_pezzi_valido ? defLCD_Color_Trasparente : defLCD_Color_Yellow);
 
 			//strcpy(hw.ucString,"Ohm");
 			if (privato_lavoro.lavoro.fOhm>=10000)
@@ -1625,7 +1707,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 			else{
 				sprintf(hw.ucString,"%-8.2f",privato_lavoro.lavoro.fOhm);
 			}
-			ucPrintStaticButton(hw.ucString,defLD_Ohm_row,defLD_Ohm_col,enumFontMedium,enumLD_OhmPezzo,defLCD_Color_Trasparente);
+			ucPrintStaticButton(hw.ucString,defLD_Ohm_row,defLD_Ohm_col,enumFontMedium,enumLD_OhmPezzo, num_ohm_valido ? defLCD_Color_Trasparente  : defLCD_Color_Yellow);
 
 			//strcpy(hw.ucString,"Descrizione");
 			sprintf(hw.ucString,"%-40.40s",pucStringLang(enumStr20_Descrizione));
@@ -1663,7 +1745,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 			vStringLangCopy(hw.ucString,enumStr20_L_Mode+(pJobsSelected_Jobs->ucWorkingMode_0L_1LR?1:0));
 			ucPrintStaticButton(hw.ucString,defLD_numfili_row,defLD_modo_col,enumFontMedium,enumLD_Modo,defLCD_Color_Trasparente);
 
-			for (i=0;i<atoi(his.ucNumFili);i++){
+			for (i=0;i<atoi(his.ucNumFili) && (i < MAX_NUM_FILI);i++){
 				sprintf(hw.ucString,"%-8.8s%1i",pucStringLang(enumStr20_Filo),i+1);
 				vStrUpperCase(hw.ucString);
 				ucPrintSmallText_ColNames(hw.ucString,defLD_numfili_row-14+i*16,defLD_modo_col+3*16+16+8);
@@ -1673,8 +1755,8 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 					sprintf(hw.ucString,"%6.3f",nvram_struct.resspec[i]);
 				ucPrintStaticButton(hw.ucString,defLD_numfili_row-14+i*16,defLD_modo_col+3*16+16+8+10*8,enumFontSmall,enumLD_OhmM_filo_1+i,defLCD_Color_Trasparente);
 			}
-			// if not all of the parameters are valid, no OK button will be shown
-			if (privato_lavoro.lavoro.ucValidKey !=defLavoroValidoKey)
+			// if not all of the parameters are valid, no OK button will be shown, but a right arrow will be shown instead
+			if (privato_lavoro.lavoro.ucValidKey != defLavoroValidoKey)
 			{
 				vAddStandardButtons(enumLD_Sx);
 			}

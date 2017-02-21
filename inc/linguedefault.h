@@ -302,6 +302,9 @@
 	"filo aggrov. check", 	// #define enumStr20_Enable_Check_Wire_tangled 293
 	"aggrov. soglia vel", 	// #define enumStr20_Speed_Check_Wire_tangled 294
 	"aggrov. min tempo", 	// #define enumStr20_Duration_Check_Wire_tangled 295
+	"SALVA ARTICOLO",		// #define enumStr20_Article_Save 296
+	"NOME ARTICOLO", 			// #define enumStr20_Article_name 297
+	"Ohm/m filo 4" ,		// #define enumStr20_Ohmm_filo4 298
 		
 };
 
@@ -630,6 +633,9 @@
 	"tangl. wire check", 	// #define enumStr20_Enable_Check_Wire_tangled 293
 	"tangl. speed set", 	// #define enumStr20_Speed_Check_Wire_tangled 294
 	"tangl. time set", 		// #define enumStr20_Duration_Check_Wire_tangled 295
+	"ITEM SAVE",			// #define enumStr20_Article_Save 296
+	"ITEM NAME", 			// #define enumStr20_Article_name 297
+	"Wire 4 Ohm/mt" ,		// #define enumStr20_Ohmm_filo4 298
 
 
 };

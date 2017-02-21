@@ -627,8 +627,11 @@ typedef struct _TipoStructInfoFieldCodice{
 	#define enumStr20_Enable_Check_Wire_tangled 293
 	#define enumStr20_Speed_Check_Wire_tangled 294
 	#define enumStr20_Duration_Check_Wire_tangled 295
+	#define enumStr20_Article_Save 296
+	#define enumStr20_Article_name 297
+	#define enumStr20_Ohmm_filo4 298
 
-	#define enumStr20_NumOf					296
+	#define enumStr20_NumOf					299
 
 typedef int enumStringhe20char;
 
@@ -747,8 +750,10 @@ unsigned char ucHW_listaLavori(void);
 
 #define defMaxCharOhmMFilo 7
 
+#define defMaxCharArticleName 20
+
 // per inserimento ohm/m filo
-extern code TipoStructInfoFieldCodice_Lingua im_ohmm_fili[3];
+extern code TipoStructInfoFieldCodice_Lingua im_ohmm_fili[4];
 
 unsigned char ucHW_inserisciOhmMfili(void);
 

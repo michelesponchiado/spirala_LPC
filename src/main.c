@@ -132,10 +132,20 @@ For more information about the syntax of the linker scripts and how to modify th
 #ifdef defSimulaEncoder
 	#define defMinorNumFirmware_Scheda "XX"
 #else
-	#define defMinorNumFirmware_Scheda "01"
+	#define defMinorNumFirmware_Scheda "03"
 #endif
 
 // version history
+//
+// 5.03
+// * ATTENZIONE! Da questa evrsione vengono supportati 4 fili per cui installandola vengono perse le commesse, e le tolleranze vengono reinizializzate a default
+// * disabilitate le modifiche per gestione articoli (codice prodotto + resistenza spira + numero pezzi + modo + res spec fili)
+// * abilitato quarto filo
+// * nell'inserimento delle lavorazioni, sia automatiche che manuali, se numero pezzi o ohm spirale è a 0, vengono visualizzate con fondo giallo per evidenziare che non sono inizializzate
+//
+// 5.02
+// * in corso modifiche per gestione articoli (codice prodotto + resistenza spira + numero pezzi + modo + res spec fili)
+// * risolve bug per cui entrando diretti da accensione in finestra ohm/m fili veniva visualizzato infiniti metri perché programma running non era inizializzato correttamente
 //
 // 5.01
 // work almost OK with LPCXpresso

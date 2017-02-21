@@ -12,6 +12,7 @@ C_SRCS += \
 ../src/az4186_emc.c \
 ../src/az4186_files.c \
 ../src/az4186_initHw.c \
+../src/az4186_items.c \
 ../src/az4186_program_codes.c \
 ../src/az4186_temperature_compensation.c \
 ../src/az4186_window_temperature_compensation.c \
@@ -49,6 +50,7 @@ OBJS += \
 ./src/az4186_emc.o \
 ./src/az4186_files.o \
 ./src/az4186_initHw.o \
+./src/az4186_items.o \
 ./src/az4186_program_codes.o \
 ./src/az4186_temperature_compensation.o \
 ./src/az4186_window_temperature_compensation.o \
@@ -86,6 +88,7 @@ C_DEPS += \
 ./src/az4186_emc.d \
 ./src/az4186_files.d \
 ./src/az4186_initHw.d \
+./src/az4186_items.d \
 ./src/az4186_program_codes.d \
 ./src/az4186_temperature_compensation.d \
 ./src/az4186_window_temperature_compensation.d \
