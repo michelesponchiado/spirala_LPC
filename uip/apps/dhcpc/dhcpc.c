@@ -38,6 +38,8 @@
 #include "dhcpc.h"
 #include "timer.h"
 #include "pt.h"
+#include "uip_arp.h"
+#include "emac.h"
 
 #define STATE_INITIAL         0
 #define STATE_SENDING         1
@@ -93,6 +95,22 @@ struct dhcp_msg {
 
 static const u8_t xid[4] = {0xad, 0xde, 0x12, 0x23};
 static const u8_t magic_cookie[4] = {99, 130, 83, 99};
+
+#define def_local_server_UDP_port 3117
+
+static void my_UDP_server_init(void)
+{
+	uip_ipaddr_t ipaddr;
+	// setting remote id address to all zeroes and remote port to all zeros, we accept every incoming connection on local port def_local_server_UDP_port
+	uip_ipaddr(ipaddr, 0,0,0,0);
+	s.conn_server_UDP = uip_udp_new(&ipaddr, HTONS(0));
+	if(s.conn_server_UDP != NULL)
+	{
+		// set the local port address
+		uip_udp_bind(s.conn_server_UDP, HTONS(def_local_server_UDP_port));
+	}
+
+}
 /*---------------------------------------------------------------------------*/
 static u8_t *
 add_msg_type(u8_t *optptr, u8_t type)
@@ -347,6 +365,7 @@ typedef enum
 	enum_dhcp_state_wait_discover_reply,
 	enum_dhcp_state_send_request,
 	enum_dhcp_state_wait_request_reply,
+	enum_dhcp_state_config_received_init,
 	enum_dhcp_state_config_received,
 
 	enum_dhcp_state_numof
@@ -354,8 +373,9 @@ typedef enum
 
 static enum_dhcp_state dhcp_state;
 
-static void my_handle_DHCP(void)
+static unsigned int do_further_handle_DHCP(void)
 {
+	unsigned int do_further_handle = 0;
 	switch(dhcp_state)
 	{
 		case enum_dhcp_state_idle:
@@ -408,8 +428,7 @@ static void my_handle_DHCP(void)
 		{
 		    if(uip_newdata() && parse_msg() == DHCPACK)
 		    {
-				s.state = STATE_CONFIG_RECEIVED;
-			    dhcp_state = enum_dhcp_state_config_received;
+			    dhcp_state = enum_dhcp_state_config_received_init;
 				break;
 		    }
 		    if (timer_expired(&s.timer))
@@ -427,34 +446,48 @@ static void my_handle_DHCP(void)
 		    }
 			break;
 		}
+		case enum_dhcp_state_config_received_init:
+		{
+			s.state = STATE_CONFIG_RECEIVED;
+			my_UDP_server_init();
+			dhcp_state = enum_dhcp_state_config_received;
+			break;
+		}
 		case enum_dhcp_state_config_received:
 		{
+			do_further_handle = 1;
 			break;
 		}
 	}
+	return do_further_handle;
 }
 /*---------------------------------------------------------------------------*/
-void
-dhcpc_init(const void *mac_addr, int mac_len)
+void dhcpc_init(void)
 {
-  uip_ipaddr_t addr;
-  
-  s.mac_addr = mac_addr;
-  s.mac_len  = mac_len;
+	uip_ipaddr_t addr;
 
-  s.state = STATE_INITIAL;
-  uip_ipaddr(addr, 255,255,255,255);
-  s.conn = uip_udp_new(&addr, HTONS(DHCPC_SERVER_PORT));
-  if(s.conn != NULL) {
-    uip_udp_bind(s.conn, HTONS(DHCPC_CLIENT_PORT));
-  }
-  PT_INIT(&s.pt);
+	s.state = STATE_INITIAL;
+	uip_ipaddr(addr, 255,255,255,255);
+	s.conn = uip_udp_new(&addr, HTONS(DHCPC_SERVER_PORT));
+	if(s.conn != NULL)
+	{
+		uip_udp_bind(s.conn, HTONS(DHCPC_CLIENT_PORT));
+	}
+	PT_INIT(&s.pt);
 }
 /*---------------------------------------------------------------------------*/
-void
-dhcpc_appcall(void)
+void dhcpc_appcall(void)
 {
-	my_handle_DHCP();
+	if (do_further_handle_DHCP())
+	{
+		if(uip_newdata())
+		{
+			// uip_appdata points to the body of the UDP packet
+			// uip_len is the UDP packet length
+			// when the reply is ready, copy the payload in uip_appdata, then call
+			// uip_send(uip_appdata, len_reply_udp_payload);
+		}
+	}
 }
 /*---------------------------------------------------------------------------*/
 void
@@ -476,6 +509,7 @@ void dhcpc_configured(const struct dhcpc_state *s)
 /*---------------------------------------------------------------------------*/
 
 static struct timer periodic_timer, arp_timer;
+
 void my_uIP_init(void)
 {
 	uip_ipaddr_t ipaddr;
@@ -492,12 +526,12 @@ void my_uIP_init(void)
 	uip_ipaddr(ipaddr, 255,255,255,0);
 	uip_setnetmask(ipaddr);
 
-	//httpd_init();
+	s.mac_addr = my_MAC_address_bytes();
+	s.mac_len  = my_MAC_address_length();
+	dhcpc_init();
 }
 
-#include "uip_arp.h"
-unsigned int netdev_read(void);
-void netdev_send(void);
+
 void my_uIP_handle(void)
 {
 	uip_len = netdev_read();

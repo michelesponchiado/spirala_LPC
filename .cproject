@@ -274,6 +274,7 @@
 									<listOptionValue builtIn="false" value="defEnable_Anybus_Module=1"/>
 									<listOptionValue builtIn="false" value="def_canopen_enable"/>
 									<listOptionValue builtIn="false" value="code=const"/>
+									<listOptionValue builtIn="false" value="AZ4186_UDP=1"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.541427249" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mthumb-interwork -fshort-enums  -Wno-pointer-sign -Wno-unused-local-typedefs -fdata-sections -ffunction-sections " valueType="string"/>
 								<option id="com.crt.advproject.gcc.hdrlib.1291119426" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.codered" valueType="enumerated"/>

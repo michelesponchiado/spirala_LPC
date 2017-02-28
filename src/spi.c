@@ -38,6 +38,10 @@
 #ifdef def_use_emac
     #include "az4186_emac.h"
 #endif
+#ifdef AZ4186_UDP
+    #include "uip.h"
+    #include "dhcpc.h"
+#endif
 
 xdat TipoStructHandleDistanziatore hDist;
 
@@ -2477,6 +2481,10 @@ void spi_main(void){
 #ifdef def_use_emac
 	az4186_emac_loop();
 #endif
+#ifdef AZ4186_UDP
+	my_uIP_handle();
+#endif
+
 
 	} /* for(;;) */
 

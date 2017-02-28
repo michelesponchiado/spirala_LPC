@@ -11,6 +11,8 @@
 #ifndef __EMAC_H 
 #define __EMAC_H
 
+#include "type.h"
+
 /* For the EMAC test, there are two ways to test:
 	TX_ONLY and BOUNCE_RX flags can be set one at a time, not both.
 	When TX_ONLY is set to 1, it's a TX_ONLY packet from the MCB2300
@@ -266,6 +268,12 @@ extern void EMAC_RxDisable( void );
 
 extern DWORD EMACSend( DWORD *EMACBuf, DWORD length );
 extern DWORD EMACReceive( void );
+
+
+uint8_t *my_MAC_address_bytes(void);
+uint8_t my_MAC_address_length(void);
+void netdev_send(void);
+unsigned int netdev_read(void);
 
 #endif /* end __EMAC_H */
 /*****************************************************************************

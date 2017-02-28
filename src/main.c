@@ -29,6 +29,10 @@
     #include "az4186_emac.h"
 #endif
 
+#ifdef AZ4186_UDP
+    #include "uip.h"
+    #include "dhcpc.h"
+#endif
 
 // defines per abilitare i vari test
 //#define defTestLcd
@@ -1479,7 +1483,10 @@ int main(void){
 #ifdef def_use_emac
 	az4186_emac_init();
 #endif
-    
+#ifdef AZ4186_UDP
+	my_uIP_init();
+#endif
+
 	// attesa boot fpga: serve per evitare di spedire comandi ad fpga mentre sta facendo il boot
 	vWaitBootFpga();
     ui_enable_external_ram(1);

@@ -1089,163 +1089,176 @@ typedef struct _build_packet_udp
 	uint32_t tx_len;
 }__attribute__ ((__packed__)) type_build_packet_udp;
 
-// half integer from native byte order to big endian byte order
-static uint16_t my_htons(uint16_t src)
-{
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	uint16_t r = ((src << 8) & 0xFF00) | ((src >> 8) & 0xFF);
-#else
-	uint16_t r = src;
-#endif
-	return r;
-}
 #warning "handle source MAC Address"
 static uint8_t src_MAC_ADDRESS[my_ETH_ALEN] =
 {
 	0x10, 0x1f, 0xe0, 0x12, 0x1d, 0x0c
 };
-#warning "handle dst MAC Address"
-static uint8_t dst_MAC_ADDRESS[my_ETH_ALEN] =
-{
-	0xff, 0xff, 0xff, 0xff, 0xff, 0xff
-};
 
-static unsigned short csum(unsigned short *buf, int nwords)
+uint8_t *my_MAC_address_bytes(void)
 {
-	unsigned long sum;
-	for(sum=0; nwords>0; nwords--)
-		sum += *buf++;
-	sum = (sum >> 16) + (sum &0xffff);
-	sum += (sum >> 16);
-	return (unsigned short)(~sum);
+	return src_MAC_ADDRESS;
 }
-
-static void build_my_udp_packet(type_build_packet_udp *p)
+uint8_t my_MAC_address_length(void)
 {
-	uint32_t tx_len = 0;
-	// ethernet header
-	type_my_ether_header *peh = &p->udp.eh;
-	{
-		memcpy(&peh->ether_shost[0], src_MAC_ADDRESS, sizeof(peh->ether_shost));
-		memcpy(&peh->ether_dhost[0], dst_MAC_ADDRESS, sizeof(peh->ether_shost));
-		peh->ether_type = my_htons(my_ETH_P_IP);
-		tx_len += sizeof(*peh);
-	}
-	// ip header
-	type_my_iphdr *iph = &p->udp.ip;
-	{
-		/* IP Header */
-		iph->ihl 		= 5;
-		iph->version 	= 4;
-		iph->tos 		= 16; 	// Low delay
-		iph->id 		= my_htons(54321);
-		iph->ttl 		= 255; 	// hops
-		iph->protocol 	= 17; 	// UDP
-		/* Source IP address, can be spoofed */
-		//iph->saddr = inet_addr(inet_ntoa(((struct sockaddr_in *)&if_ip.ifr_addr)->sin_addr));
-		iph->saddr = 0x00000000;
-		/* Destination IP address */
-		iph->daddr = 0xffffffff;
-		tx_len += sizeof(*iph);
-	}
-	// udp header
-	type_my_udphdr *udph = &p->udp.udp;
-	{
-		/* UDP Header */
-		udph->source = my_htons(3118);
-		udph->dest = my_htons(3119);
-		udph->check = 0; // skip
-		tx_len += sizeof(*udph);
-	}
-	{
-		uint8_t * p_pay = &p->udp.payload[0];
-		memcpy(p_pay, c_test_body_message, sizeof(p->udp.payload));
-		tx_len += sizeof(p->udp.payload);
-	}
-
-	/* Length of UDP payload and header */
-	udph->len = my_htons(tx_len - sizeof(type_my_ether_header) - sizeof(type_my_iphdr));
-	/* Length of IP payload and header */
-	iph->tot_len = my_htons(tx_len - sizeof(type_my_ether_header));
-	/* Calculate IP checksum on completed header */
-	iph->check = csum((unsigned short *)(p->buf + sizeof(type_my_ether_header)), sizeof(type_my_iphdr) / 2);
-	p->tx_len = tx_len;
+	return sizeof(src_MAC_ADDRESS) / sizeof(src_MAC_ADDRESS[0]);
 }
 
 
-/******************************************************************************
-** Function name:		PacketGen
-**
-** Descriptions:		Create a perfect packet for TX
-**
-** parameters:			None
-** Returned value:		None
-**
-******************************************************************************/
-static void PacketGen( BYTE *txptr )
-{
+#if TX_ONLY
+	// half integer from native byte order to big endian byte order
+	static uint16_t my_htons(uint16_t src)
+	{
+	#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+		uint16_t r = ((src << 8) & 0xFF00) | ((src >> 8) & 0xFF);
+	#else
+		uint16_t r = src;
+	#endif
+		return r;
+	}
 
-  int i;
-  DWORD crcValue;
-  DWORD BodyLength = TX_PACKET_SIZE - 14;
+	#warning "handle dst MAC Address"
+	static uint8_t dst_MAC_ADDRESS[my_ETH_ALEN] =
+	{
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+	};
 
-  /* Dest address */
-  *(txptr+0) = EMAC_DST_ADDR56 & 0xFF;
-  *(txptr+1) = (EMAC_DST_ADDR56 >> 0x08) & 0xFF;
-  *(txptr+2) = EMAC_DST_ADDR34 & 0xFF;
-  *(txptr+3) = (EMAC_DST_ADDR34 >> 0x08) & 0xFF;
-  *(txptr+4) = EMAC_DST_ADDR12 & 0xFF;
-  *(txptr+5) = (EMAC_DST_ADDR12 >> 0x08) & 0xFF;
+	static unsigned short csum(unsigned short *buf, int nwords)
+	{
+		unsigned long sum;
+		for(sum=0; nwords>0; nwords--)
+			sum += *buf++;
+		sum = (sum >> 16) + (sum &0xffff);
+		sum += (sum >> 16);
+		return (unsigned short)(~sum);
+	}
+	static void build_my_udp_packet(type_build_packet_udp *p)
+	{
+		uint32_t tx_len = 0;
+		// ethernet header
+		type_my_ether_header *peh = &p->udp.eh;
+		{
+			memcpy(&peh->ether_shost[0], src_MAC_ADDRESS, sizeof(peh->ether_shost));
+			memcpy(&peh->ether_dhost[0], dst_MAC_ADDRESS, sizeof(peh->ether_shost));
+			peh->ether_type = my_htons(my_ETH_P_IP);
+			tx_len += sizeof(*peh);
+		}
+		// ip header
+		type_my_iphdr *iph = &p->udp.ip;
+		{
+			/* IP Header */
+			iph->ihl 		= 5;
+			iph->version 	= 4;
+			iph->tos 		= 16; 	// Low delay
+			iph->id 		= my_htons(54321);
+			iph->ttl 		= 255; 	// hops
+			iph->protocol 	= 17; 	// UDP
+			/* Source IP address, can be spoofed */
+			//iph->saddr = inet_addr(inet_ntoa(((struct sockaddr_in *)&if_ip.ifr_addr)->sin_addr));
+			iph->saddr = 0x00000000;
+			/* Destination IP address */
+			iph->daddr = 0xffffffff;
+			tx_len += sizeof(*iph);
+		}
+		// udp header
+		type_my_udphdr *udph = &p->udp.udp;
+		{
+			/* UDP Header */
+			udph->source = my_htons(3118);
+			udph->dest = my_htons(3119);
+			udph->check = 0; // skip
+			tx_len += sizeof(*udph);
+		}
+		{
+			uint8_t * p_pay = &p->udp.payload[0];
+			memcpy(p_pay, c_test_body_message, sizeof(p->udp.payload));
+			tx_len += sizeof(p->udp.payload);
+		}
 
-  /* Src address */
-  *(txptr+6) = EMAC_ADDR56 & 0xFF;
-  *(txptr+7) = (EMAC_ADDR56 >> 0x08) & 0xFF;
-  *(txptr+8) = EMAC_ADDR34 & 0xFF;
-  *(txptr+9) = (EMAC_ADDR34 >> 0x08) & 0xFF;
-  *(txptr+10) = EMAC_ADDR12 & 0xFF;
-  *(txptr+11) = (EMAC_ADDR12 >> 0x08) & 0xFF;
+		/* Length of UDP payload and header */
+		udph->len = my_htons(tx_len - sizeof(type_my_ether_header) - sizeof(type_my_iphdr));
+		/* Length of IP payload and header */
+		iph->tot_len = my_htons(tx_len - sizeof(type_my_ether_header));
+		/* Calculate IP checksum on completed header */
+		iph->check = csum((unsigned short *)(p->buf + sizeof(type_my_ether_header)), sizeof(type_my_iphdr) / 2);
+		p->tx_len = tx_len;
+	}
 
-  /* Type or length, body length is TX_PACKET_SIZE - 14 bytes */
-  *(txptr+12) = BodyLength & 0xFF;
-  *(txptr+13) = (BodyLength >> 0x08) & 0xFF;
+	/******************************************************************************
+	** Function name:		PacketGen
+	**
+	** Descriptions:		Create a perfect packet for TX
+	**
+	** parameters:			None
+	** Returned value:		None
+	**
+	******************************************************************************/
+	static void PacketGen( BYTE *txptr )
+	{
 
-  /* Skip the first 14 bytes for dst, src, and type/length */
-  for ( i=0; i < BodyLength; i++ )
-  {
-	*(txptr+i+14) = c_test_body_message[i];
-  }
-  crcValue = crc32_bfr( txptr, TX_PACKET_SIZE );
+	  int i;
+	  DWORD crcValue;
+	  DWORD BodyLength = TX_PACKET_SIZE - 14;
 
-  *(txptr+TX_PACKET_SIZE) = (0xff & crcValue);
-  *(txptr+TX_PACKET_SIZE+1) = 0xff & (crcValue >> 8 );
-  *(txptr+TX_PACKET_SIZE+2) = 0xff & (crcValue >> 16);
-  *(txptr+TX_PACKET_SIZE+3) = 0xff & (crcValue >> 24);
-  return;
-}
-/*****************************************************************************
-** Function name:		AllPacketGen
-**
-** Descriptions:		Fill all the TX buffers based on the number
-**						of TX blocks.
-**
-** parameters:			None
-** Returned value:		None
-**
-*****************************************************************************/
-static void AllPacketGen ( void )
-{
-  DWORD i;
-  BYTE *txptr;
+	  /* Dest address */
+	  *(txptr+0) = EMAC_DST_ADDR56 & 0xFF;
+	  *(txptr+1) = (EMAC_DST_ADDR56 >> 0x08) & 0xFF;
+	  *(txptr+2) = EMAC_DST_ADDR34 & 0xFF;
+	  *(txptr+3) = (EMAC_DST_ADDR34 >> 0x08) & 0xFF;
+	  *(txptr+4) = EMAC_DST_ADDR12 & 0xFF;
+	  *(txptr+5) = (EMAC_DST_ADDR12 >> 0x08) & 0xFF;
 
-  txptr = (BYTE *)EMAC_TX_BUFFER_ADDR;
-  for ( i = 0; i < EMAC_TX_BLOCK_NUM; i++ )
-  {
-	//PacketGen( txptr );
-	build_my_udp_packet((type_build_packet_udp *)txptr);
-	txptr += EMAC_BLOCK_SIZE;
-  }
-  return;
-}
+	  /* Src address */
+	  *(txptr+6) = EMAC_ADDR56 & 0xFF;
+	  *(txptr+7) = (EMAC_ADDR56 >> 0x08) & 0xFF;
+	  *(txptr+8) = EMAC_ADDR34 & 0xFF;
+	  *(txptr+9) = (EMAC_ADDR34 >> 0x08) & 0xFF;
+	  *(txptr+10) = EMAC_ADDR12 & 0xFF;
+	  *(txptr+11) = (EMAC_ADDR12 >> 0x08) & 0xFF;
+
+	  /* Type or length, body length is TX_PACKET_SIZE - 14 bytes */
+	  *(txptr+12) = BodyLength & 0xFF;
+	  *(txptr+13) = (BodyLength >> 0x08) & 0xFF;
+
+	  /* Skip the first 14 bytes for dst, src, and type/length */
+	  for ( i=0; i < BodyLength; i++ )
+	  {
+		*(txptr+i+14) = c_test_body_message[i];
+	  }
+	  crcValue = crc32_bfr( txptr, TX_PACKET_SIZE );
+
+	  *(txptr+TX_PACKET_SIZE) = (0xff & crcValue);
+	  *(txptr+TX_PACKET_SIZE+1) = 0xff & (crcValue >> 8 );
+	  *(txptr+TX_PACKET_SIZE+2) = 0xff & (crcValue >> 16);
+	  *(txptr+TX_PACKET_SIZE+3) = 0xff & (crcValue >> 24);
+	  return;
+	}
+	/*****************************************************************************
+	** Function name:		AllPacketGen
+	**
+	** Descriptions:		Fill all the TX buffers based on the number
+	**						of TX blocks.
+	**
+	** parameters:			None
+	** Returned value:		None
+	**
+	*****************************************************************************/
+	static void AllPacketGen ( void )
+	{
+	  DWORD i;
+	  BYTE *txptr;
+
+	  txptr = (BYTE *)EMAC_TX_BUFFER_ADDR;
+	  for ( i = 0; i < EMAC_TX_BLOCK_NUM; i++ )
+	  {
+		//PacketGen( txptr );
+		build_my_udp_packet((type_build_packet_udp *)txptr);
+		txptr += EMAC_BLOCK_SIZE;
+	  }
+	  return;
+	}
+#endif
+
 
 typedef struct _emac_stats
 {
