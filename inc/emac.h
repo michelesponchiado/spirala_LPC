@@ -26,10 +26,11 @@
 	ENABLE_WOL flag is used to test power down and WOL functionalty.
 	BOUNCE_RX flag needs to be set to 1 when WOL is being tested. 
 */
-#define TX_ONLY				1
+#define TX_ONLY				0
 #define BOUNCE_RX			0
 #define ENABLE_WOL			0
 #define ENABLE_HASH			0
+#define UIP					1
 
 #define RMII				1	/* If zero, it's a MII interface. */
 #define ACCEPT_BROADCAST	0

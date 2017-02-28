@@ -1247,6 +1247,15 @@ static void AllPacketGen ( void )
   return;
 }
 
+typedef struct _emac_stats
+{
+	uint32_t OK_num_receive;
+	uint32_t OK_num_send;
+	uint32_t ERR_receive_too_long;
+	uint32_t ERR_send_len;
+	uint32_t ERR_send;
+}type_emac_stats;
+
 
 typedef struct _type_emac_handle
 {
@@ -1269,7 +1278,16 @@ typedef struct _type_emac_handle
 	#if ENABLE_WOL
 		DWORD FirstTime_WOL = TRUE;
 	#endif
+#if UIP
+	uint8_t ibuffer[EMAC_BLOCK_SIZE];
+	uint32_t rx_length;
+	unsigned int rx_idx_buffer;
+	unsigned int rx_valid;
+	unsigned int tx_idx_buffer;
+	unsigned int tx_valid;
+#endif
 
+	type_emac_stats stats;
 }type_emac_handle;
 type_emac_handle emac_handle;
 
@@ -1279,6 +1297,47 @@ void az4186_emac_init(void)
 	init_emac_stati();
 	my_emac_init();
 }
+
+
+#include "uip.h"
+unsigned int netdev_read(void)
+{
+	unsigned int r = 0;
+	if (emac_handle.rx_valid)
+	{
+		uint32_t rx_length = emac_handle.rx_length;
+		if (rx_length <= UIP_BUFSIZE)
+		{
+			r = rx_length;
+			memcpy(uip_buf, emac_handle.ibuffer, rx_length);
+		}
+		emac_handle.rx_valid = 0;
+	}
+	return r;
+}
+
+void netdev_send(void)
+{
+	uint16_t len = uip_len;
+	if (len > EMAC_BLOCK_SIZE)
+	{
+		emac_handle.stats.ERR_send_len++;
+	}
+	else
+	{
+		emac_handle.txptr = (BYTE *)EMAC_TX_BUFFER_ADDR;
+		memcpy(emac_handle.txptr, uip_buf, len);
+		if (!EMACSend( (DWORD *)emac_handle.txptr, len))
+		{
+			emac_handle.stats.ERR_send++;
+		}
+		else
+		{
+			emac_handle.stats.OK_num_send++;
+		}
+	}
+}
+
 
 
 void az4186_emac_loop(void)
@@ -1316,6 +1375,38 @@ void az4186_emac_loop(void)
 
 		return;
 	}
+
+#if UIP
+	if ( my_emac.PacketReceived == TRUE )
+	{
+		my_emac.PacketReceived = FALSE;
+		if (my_emac.ReceiveLength <= sizeof(emac_handle.ibuffer))
+		{
+			emac_handle.rx_valid = 0;
+				memcpy(emac_handle.ibuffer,emac_handle.rxptr,sizeof(emac_handle.ibuffer));
+				emac_handle.rx_length = my_emac.ReceiveLength;
+			emac_handle.rx_valid = 1;
+			emac_handle.stats.OK_num_receive++;
+		}
+		else
+		{
+			emac_handle.stats.ERR_receive_too_long++;
+		}
+//	  EMACSend( (DWORD *)emac_handle.txptr, ReceiveLength - 2 );
+//	  emac_handle.txptr += EMAC_BLOCK_SIZE;
+		emac_handle.rx_idx_buffer++;
+		if ( ++emac_handle.rx_idx_buffer >= EMAC_RX_BLOCK_NUM )
+		{
+			emac_handle.rx_idx_buffer = 0;
+			emac_handle.rxptr = (BYTE *)EMAC_RX_BUFFER_ADDR;
+		}
+		else
+		{
+			emac_handle.rxptr += EMAC_BLOCK_SIZE;
+		}
+	}
+#endif
+
 #if TX_ONLY
 	if (emac_handle.enable_TX)
 	{
