@@ -287,7 +287,7 @@ unsigned char ucPurgeManualCodesEmptyFromJobList(void)
 	return 1;
 }
 
-static TipoLavoro *pFindManualCodeInJobList(unsigned int * pui_manual_code_found)
+static TipoLavoro *pFindManualCodeInJobList(unsigned int * pui_manual_code_found, TipoStructCodeJobList **ppcode_job_list)
 {
 	unsigned int ui_manual_code_found = 0;
 	TipoLavoro *p_return = &pJobsSelected_Jobs->lista[0];
@@ -298,6 +298,10 @@ static TipoLavoro *pFindManualCodeInJobList(unsigned int * pui_manual_code_found
 		if (nvram_struct.codelist.codeJobList[i].ucManual)
 		{
 			p_return = &nvram_struct.codelist.codeJobList[i].jobs.lista[0];
+			if (ppcode_job_list)
+			{
+				*ppcode_job_list = &nvram_struct.codelist.codeJobList[i];
+			}
 			ui_manual_code_found = 1;
 		}
 	}
@@ -1425,7 +1429,8 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 			{
 				unsigned int is_an_existent_manual_code;
 				TipoLavoro *pCode_manual;
-				pCode_manual = pFindManualCodeInJobList(&is_an_existent_manual_code);
+				TipoStructCodeJobList *ppcode_job_list = NULL;
+				pCode_manual = pFindManualCodeInJobList(&is_an_existent_manual_code, &ppcode_job_list);
 				// prelevo il codice manuale se esiste, altrimenti il primo della lista correntemente selezionata
 				memcpy(&privato_lavoro.lavoro, pCode_manual, sizeof(privato_lavoro.lavoro));
 				// if there was no manual code in the job list, better to cleanup the number of pieces done;
@@ -1434,6 +1439,12 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 				{
 		            // azzero il numero di pezzi fatti!
 		            privato_lavoro.lavoro.npezzifatti=0;
+				}
+				// initialize the working code if it has been found
+				if (ppcode_job_list)
+				{
+					snprintf(his.ucCodice, sizeof(his.ucCodice), "%s", ppcode_job_list->ucCodice);
+					vInitializeHisFields(&his);
 				}
 			}
 			//sprintf(iml[0].pc,iml[0].ucFmtField,privato_lavoro.lavoro.ucPosition);

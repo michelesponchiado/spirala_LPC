@@ -140,12 +140,16 @@ For more information about the syntax of the linker scripts and how to modify th
 #ifdef defSimulaEncoder
 	#define defMinorNumFirmware_Scheda "XX"
 #elif defined(def_use_emac)
-	#define defMinorNumFirmware_Scheda "04EMAC"
+	#define defMinorNumFirmware_Scheda "05E"
 #else
-	#define defMinorNumFirmware_Scheda "04"
+	#define defMinorNumFirmware_Scheda "05"
 #endif
 
 // version history
+//
+// 5.05
+// * checking BUG that exiting from manual production, entering a normal job and re-entering again in the manual mode,
+//   the manual job was a messed up mix-up of normal and manual parameters
 //
 // 5.04
 // * reset della ram imposta la lingua ad inglese
