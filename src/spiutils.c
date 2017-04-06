@@ -3617,9 +3617,11 @@ unsigned char ucHW_listaLavori(void){
 
 							// trasferisco da lista lavori a nvram_struct.commesse...
 							vTrasferisciDaListaLavoriAcommesse();
+
 							// imposto nel primo parametro della finestra modifica lavori il numero del lavoro che si vuol modificare...
 							ucSetWindowParam(enumWinId_ModificaLavoro,0, pJobsSelected_Jobs->ucNumFirstLavoroVisualizzato+i-enumLL_lavoro_1);
 							ucCallWindow(enumWinId_ModificaLavoro);
+
 							return 2;
 						case enumLL_desclavoro_1:
 						case enumLL_desclavoro_2:

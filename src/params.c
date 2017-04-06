@@ -3474,7 +3474,16 @@ extern void vInitBandella(void);
 		vJumpToWindow(enumWinId_setupProduzione);
 	}
 	else if (pJobsSelected_Jobs->ucNumLavoriInLista)
-		vJumpToWindow(enumWinId_ListaLavori);
+	{
+		if (nvram_struct.codelist.codeJobList[nvram_struct.codelist.ucIdxActiveElem].ucManual)
+		{
+			vJumpToWindow(enumWinId_LottoDiretto);
+		}
+		else
+		{
+			vJumpToWindow(enumWinId_ListaLavori);
+		}
+	}
 	else
 		vJumpToWindow(enumWinId_listaCodici);
 	vForceLcdRefresh();

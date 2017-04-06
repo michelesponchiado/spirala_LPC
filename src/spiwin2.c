@@ -287,7 +287,7 @@ unsigned char ucPurgeManualCodesEmptyFromJobList(void)
 	return 1;
 }
 
-static TipoLavoro *pFindManualCodeInJobList(unsigned int * pui_manual_code_found, TipoStructCodeJobList **ppcode_job_list)
+TipoLavoro *pFindManualCodeInJobList(unsigned int * pui_manual_code_found, TipoStructCodeJobList **ppcode_job_list)
 {
 	unsigned int ui_manual_code_found = 0;
 	TipoLavoro *p_return = &pJobsSelected_Jobs->lista[0];
@@ -1357,10 +1357,12 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 
 	#define defWinParam_LD_NumCampo 0
 	#define defWinParam_LD_TipoCall 1
+	#define defWinParam_LD_SaveButton 2
 
 	#define defWinParam_LD_CallParam 0
 	#define defWinParam_LD_CallYesNo 1
 	#define defWinParam_LD_CallFornitori 2
+	#define defWinParam_LD_CallResetPiecesYesNo 3
 
 	// pulsanti della finestra
 	typedef enum {
@@ -1390,6 +1392,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 		}enumButtons_lottoDiretto;
 	xdata unsigned char i,j,ucSaveWorkingMode;
 	static unsigned char ucCodiceIngresso_Manuale[defCodice_MaxChar+1];
+	static unsigned char uc_already_asked_reset_pieces_done;
 	switch(uiGetStatusCurrentWindow()){
 		case enumWindowStatus_Null:
 		case enumWindowStatus_WaitingReturn:
@@ -1409,6 +1412,17 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 					his.ucFornitore[0]=i+'0';
 					his.ucFornitore[1]=0;
 				}
+			}
+			else if (defGetWinParam(defWinParam_LD_TipoCall)==defWinParam_LD_CallResetPiecesYesNo)
+			{
+				if (uiGetWindowParam(enumWinId_YesNo, defWinParam_YESNO_Answer))
+				{
+		            // azzero il numero di pezzi fatti!
+		            privato_lavoro.lavoro.npezzifatti=0;
+				}
+				unsigned int original_button_pressed = defGetWinParam(defWinParam_LD_SaveButton);
+				// set the original button pressed again to re-enter the window
+				forcePressedButton(original_button_pressed);
 			}
 			else if (defGetWinParam(defWinParam_LD_TipoCall)==defWinParam_LD_CallYesNo){
 			}
@@ -1464,6 +1478,7 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 				his.ucFornitore[0] = '0';
 				his.ucFornitore[1] = 0x00;
 			}
+			uc_already_asked_reset_pieces_done = 0;
 			nvram_struct.ucComingToControlloProduzioneFromJobs=0;
 			vSetStatusCurrentWindow(enumWindowStatus_Active);
 			mystrcpy(ucCodiceIngresso_Manuale,his.ucCodice,sizeof(ucCodiceIngresso_Manuale)-1);
@@ -1471,11 +1486,38 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 		case enumWindowStatus_Active:
 			// GESTIONE DELLA PRESSIONE PULSANTI...
 			for (i=0;i<enumLD_NumOfButtons;i++){
-				if (ucHasBeenPressedButton(i)){
+				if (ucHasBeenPressedButton(i))
+				{
+					if (
+							    !uc_already_asked_reset_pieces_done
+							&&   privato_lavoro.lavoro.npezzifatti
+							&&
+							(       (i == enumLD_Modo)
+								||  (i == enumLD_OhmM_filo_1) || (i == enumLD_OhmM_filo_2) || (i == enumLD_OhmM_filo_3) || (i == enumLD_OhmM_filo_4)
+								||  (i == enumLD_OhmPezzo)
+								||  (i == enumLD_numFili)
+								||  (i == enumLD_diamFilo)
+								||  (i == enumLD_diamMandrino)
+							)
+					   )
+					{
+						uc_already_asked_reset_pieces_done = 1;
+						vStringLangCopy(hw.ucStringNumKeypad_in, enumStr20_reset_pieces_done);
+						hw.ucStringNumKeypad_out[0]=0;
+						// indico che sto chiamando la yes/no
+						defSetWinParam(defWinParam_LD_TipoCall,defWinParam_LD_CallResetPiecesYesNo);
+						// save the code of the button pressed
+						defSetWinParam(defWinParam_LD_SaveButton, i);
+						// voglio visualizzare i pulsanti yes e no
+						ucSetWindowParam(enumWinId_YesNo,def_WinYesNo_Param_TipoPulsante, def_WinYesNo_PUlsantiYesNo);
+						// visualizzo ok...
+						ucCallWindow(enumWinId_YesNo);
+					}
+					else
 					switch(i){
 						case enumLD_Sx:
 							// vado al menu lista pJobsSelected_Jobs->..
-							vJumpToWindow(enumWinId_ListaLavori);
+							vJumpToWindow(enumWinId_listaCodici);
 							return 2;
 						case enumLD_Esc:
 							// chiamo il main menu...
@@ -1695,9 +1737,18 @@ unsigned char ucHW_inserisciLottoDiretto(void){
 				privato_lavoro.lavoro.ucValidKey=defLavoroNonValidoKey;
 			}
 
-			vStringLangCopy(hw.ucString,enumStr20_Inserisci_Lavoro);
-			//ucPrintStaticButton(hw.ucString,defLD_title_row,defLD_title_col,enumFontMedium,enumLD_Title,defLCD_Color_Green);
-			ucPrintTitleButton(hw.ucString,defLD_title_row,defLD_title_col,enumFontMedium,enumLD_Title,defLCD_Color_Trasparente,1);
+
+			if (privato_lavoro.lavoro.npezzifatti)
+			{
+				vStringLangCopy(hw.ucString,enumStr20_SingleJob);
+				snprintf(hw.ucString, sizeof(hw.ucString), "%s, %s: %u", hw.ucString, pucStringLang(enumStr20_Numero_pezzi), privato_lavoro.lavoro.npezzifatti);
+				ucPrintTitleButton(hw.ucString,defLD_title_row,defLD_title_col,enumFontSmall,enumLD_Title,defLCD_Color_Yellow,1);
+			}
+			else
+			{
+				vStringLangCopy(hw.ucString,enumStr20_SingleJob);
+				ucPrintTitleButton(hw.ucString,defLD_title_row,defLD_title_col,enumFontMedium,enumLD_Title,defLCD_Color_Yellow,1);
+			}
 
 
 			//strcpy(hw.ucString,"Numero pezzi");

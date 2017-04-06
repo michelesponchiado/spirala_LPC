@@ -50,6 +50,7 @@ unsigned char ucInsertCodeInJobList(unsigned char *pucCodice,unsigned char ucMan
 unsigned char ucDeleteCodeInJobList_Idx(unsigned char ucIdxElem2delete);
 unsigned char ucDeleteCodeInJobList(unsigned char *pucCodice);
 unsigned char ucPurgeManualCodesEmptyFromJobList(void);
+TipoLavoro *pFindManualCodeInJobList(unsigned int * pui_manual_code_found, TipoStructCodeJobList **ppcode_job_list);
 // effettua il purge della coda dei job
 unsigned char ucPurgeJobList(void);
 // inizializzazione della lista codici
@@ -341,11 +342,20 @@ unsigned char ucHW_listaCodici(void){
 						case enumCODELIST_Ok:
 							vValidateCodeList();
 							vRefreshActiveProductCode();
-							// solo se lista contiene almeno un codice, ha senso che io vada
-							// nella finestra jobs
-							if (nvram_struct.codelist.ucNumElem){
-								// salto alla finestra di inserimento lotto di lavorazione
-								vJumpToWindow(enumWinId_ListaLavori);
+							// If I am entering a manual job, then goto the appropriate window
+							if (nvram_struct.codelist.codeJobList[nvram_struct.codelist.ucIdxActiveElem].ucManual)
+							{
+								vJumpToWindow(enumWinId_LottoDiretto);
+							}
+							else
+							{
+								// solo se lista contiene almeno un codice, ha senso che io vada
+								// nella finestra jobs
+								if (nvram_struct.codelist.ucNumElem)
+								{
+									// salto alla finestra di inserimento lotto di lavorazione
+									vJumpToWindow(enumWinId_ListaLavori);
+								}
 							}
 							// indico di rinfrescare la finestra
 							return 2;

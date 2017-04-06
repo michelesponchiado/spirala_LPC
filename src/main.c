@@ -150,6 +150,8 @@ For more information about the syntax of the linker scripts and how to modify th
 // 5.05
 // * checking BUG that exiting from manual production, entering a normal job and re-entering again in the manual mode,
 //   the manual job was a messed up mix-up of normal and manual parameters
+// * when changing a manual job's parameters, if some pieces have already been done, the title of the window shows up the number of pieces done
+// * when changing a value in a manual job with some pieces already done, the first time an important field is changed, a window asking if you want to reset the pieces already done is prompted
 //
 // 5.04
 // * reset della ram imposta la lingua ad inglese

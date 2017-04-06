@@ -21,6 +21,7 @@ void vResetAllButtons(void);
 unsigned char ucResetTheButton(unsigned char ucNumButton);
 unsigned char ucAckButton(unsigned char ucNumButton);
 unsigned char ucHasBeenPressedButton(unsigned char ucNumButton);
+void forcePressedButton(unsigned char ucNumButton);
 unsigned char ucCreateTheButton(unsigned char ucNumButton);
 unsigned char ucTheButtonIsCreated(unsigned char ucNumButton);
 unsigned char ucTheButtonIsPressed(unsigned char ucNumButton);

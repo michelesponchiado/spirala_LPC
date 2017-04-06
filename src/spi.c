@@ -3031,6 +3031,15 @@ unsigned char ucHasBeenPressedButton(unsigned char ucNumButton){
 	return 0;
 }
 
+void forcePressedButton(unsigned char ucNumButton)
+{
+	if (ucNumButton>=defMaxButtonsOnLcd)
+	{
+		return;
+	}
+	buttons[ucNumButton].ucFlagPressed = 1;
+}
+
 unsigned char ucHasBeenTouchedButton(unsigned char ucNumButton){
 	if (ucNumButton>=defMaxButtonsOnLcd)
 		return 0;
